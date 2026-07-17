@@ -1,0 +1,135 @@
+2026-07-16 22:11:31,780 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-16 22:11:31,784 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-16 22:11:35,265 - __main__ - INFO - Loaded 92 company IDs for FK validation
+2026-07-16 22:11:35,281 - __main__ - INFO - Loaded companies: 92 rows loaded, 0 rejected, 0.041s, status=SUCCESS
+2026-07-16 22:11:35,282 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-16 22:11:35,630 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.045s, status=SUCCESS
+2026-07-16 22:11:35,635 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-16 22:11:35,738 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.023s, status=SUCCESS
+2026-07-16 22:11:35,742 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-16 22:11:36,848 - __main__ - ERROR - Failed processing documents
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:36,853 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-16 22:11:37,009 - __main__ - ERROR - Failed processing prosandcons
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:37,032 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-16 22:11:37,184 - __main__ - ERROR - Failed processing analysis
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:37,210 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-16 22:11:38,993 - __main__ - ERROR - Failed processing financial_ratios
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:38,997 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-16 22:11:39,410 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.026s, status=SUCCESS
+2026-07-16 22:11:39,412 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-16 22:11:40,934 - __main__ - ERROR - Failed processing profitandloss
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:40,936 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-16 22:11:41,926 - __main__ - ERROR - Failed processing balancesheet
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:41,928 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-16 22:11:42,389 - __main__ - ERROR - Failed processing cashflow
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 225, in run_etl
+    rows_loaded, elapsed, status = _load_table(
+                                   ^^^^^^^^^^^^
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 95, in _load_table
+    sample_cols = [c for c in invalid_df.columns if c not in ['table_name', 'company_id', 'rejection_reason']][:5]
+                              ^^^^^^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'columns'
+2026-07-16 22:11:42,392 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-16 22:11:44,476 - __main__ - INFO - Loaded stock_prices: 0 rows loaded, 5520 rejected, 0.066s, status=INSERT_ERROR: too many SQL variables
+2026-07-16 22:11:44,480 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-07-16 22:15:14,224 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-16 22:15:14,226 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-16 22:15:14,948 - __main__ - INFO - Loaded companies: 0 rows loaded, 92 rejected, 0.002s, status=INSERT_ERROR: foreign key mismatch - "financial_ratios" referencing "companies"
+2026-07-16 22:15:14,949 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-16 22:15:15,020 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.009s, status=SUCCESS
+2026-07-16 22:15:15,021 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-16 22:15:15,059 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.007s, status=SUCCESS
+2026-07-16 22:15:15,059 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-16 22:15:15,473 - __main__ - INFO - Loaded documents: 0 rows loaded, 1585 rejected, 0.005s, status=INSERT_ERROR: foreign key mismatch - "documents" referencing "companies"
+2026-07-16 22:15:15,475 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-16 22:15:15,554 - __main__ - INFO - Loaded prosandcons: 0 rows loaded, 16 rejected, 0.002s, status=INSERT_ERROR: foreign key mismatch - "prosandcons" referencing "companies"
+2026-07-16 22:15:15,554 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-16 22:15:15,620 - __main__ - INFO - Loaded analysis: 0 rows loaded, 20 rejected, 0.002s, status=INSERT_ERROR: foreign key mismatch - "analysis" referencing "companies"
+2026-07-16 22:15:15,620 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-16 22:15:16,738 - __main__ - INFO - Loaded financial_ratios: 0 rows loaded, 1184 rejected, 0.027s, status=INSERT_ERROR: foreign key mismatch - "financial_ratios" referencing "companies"
+2026-07-16 22:15:16,739 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-16 22:15:17,075 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.010s, status=SUCCESS
+2026-07-16 22:15:17,075 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-16 22:15:18,318 - __main__ - INFO - Loaded profitandloss: 0 rows loaded, 1276 rejected, 0.012s, status=INSERT_ERROR: foreign key mismatch - "profitandloss" referencing "companies"
+2026-07-16 22:15:18,318 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-16 22:15:19,234 - __main__ - INFO - Loaded balancesheet: 0 rows loaded, 1312 rejected, 0.011s, status=INSERT_ERROR: foreign key mismatch - "balancesheet" referencing "companies"
+2026-07-16 22:15:19,235 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-16 22:15:19,881 - __main__ - INFO - Loaded cashflow: 0 rows loaded, 1187 rejected, 0.008s, status=INSERT_ERROR: foreign key mismatch - "cashflow" referencing "companies"
+2026-07-16 22:15:19,882 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-16 22:15:22,270 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.045s, status=SUCCESS
+2026-07-16 22:15:22,274 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-07-16 22:32:40,924 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-16 22:32:40,928 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-16 22:32:41,927 - __main__ - INFO - Loaded companies: 0 rows loaded, 92 rejected, 0.004s, status=INSERT_ERROR: foreign key mismatch - "financial_ratios" referencing "companies"
+2026-07-16 22:32:41,928 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-16 22:32:42,004 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.006s, status=SUCCESS
+2026-07-16 22:32:42,005 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-16 22:32:42,043 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.007s, status=SUCCESS
+2026-07-16 22:32:42,043 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-16 22:32:42,562 - __main__ - INFO - Loaded documents: 0 rows loaded, 1585 rejected, 0.004s, status=INSERT_ERROR: foreign key mismatch - "documents" referencing "companies"
+2026-07-16 22:32:42,563 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-16 22:32:42,662 - __main__ - INFO - Loaded prosandcons: 0 rows loaded, 16 rejected, 0.003s, status=INSERT_ERROR: foreign key mismatch - "prosandcons" referencing "companies"
+2026-07-16 22:32:42,662 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-16 22:32:42,798 - __main__ - INFO - Loaded analysis: 0 rows loaded, 20 rejected, 0.003s, status=INSERT_ERROR: foreign key mismatch - "analysis" referencing "companies"
+2026-07-16 22:32:42,798 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-16 22:32:43,978 - __main__ - INFO - Loaded financial_ratios: 0 rows loaded, 1184 rejected, 0.011s, status=INSERT_ERROR: foreign key mismatch - "financial_ratios" referencing "companies"
+2026-07-16 22:32:43,979 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-16 22:32:44,177 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.008s, status=SUCCESS
+2026-07-16 22:32:44,178 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-16 22:32:44,861 - __main__ - INFO - Loaded profitandloss: 0 rows loaded, 1276 rejected, 0.005s, status=INSERT_ERROR: foreign key mismatch - "profitandloss" referencing "companies"
+2026-07-16 22:32:44,862 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-16 22:32:46,274 - __main__ - INFO - Loaded balancesheet: 0 rows loaded, 1312 rejected, 0.008s, status=INSERT_ERROR: foreign key mismatch - "balancesheet" referencing "companies"
+2026-07-16 22:32:46,274 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-16 22:32:46,971 - __main__ - INFO - Loaded cashflow: 0 rows loaded, 1187 rejected, 0.012s, status=INSERT_ERROR: foreign key mismatch - "cashflow" referencing "companies"
+2026-07-16 22:32:46,971 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-16 22:32:50,116 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.152s, status=SUCCESS
+2026-07-16 22:32:50,119 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv

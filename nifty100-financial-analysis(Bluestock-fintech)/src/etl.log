@@ -1,0 +1,330 @@
+2026-07-16 23:56:17,891 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-16 23:56:17,893 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-16 23:56:19,200 - __main__ - ERROR - Exception during insert for table companies: OperationalError: table companies has no column named roce_percentage
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.OperationalError: table companies has no column named roce_percentage
+2026-07-16 23:56:19,882 - __main__ - INFO - Loaded companies: 0 rows loaded, 92 rejected, 0.688s, status=INSERT_ERROR: table companies has no column named roce_percentage
+2026-07-16 23:56:19,883 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-16 23:56:20,098 - __main__ - ERROR - Exception during insert for table sectors: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,100 - __main__ - INFO - Loaded sectors: 0 rows loaded, 92 rejected, 0.026s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,100 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-16 23:56:20,210 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.021s, status=SUCCESS
+2026-07-16 23:56:20,211 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-16 23:56:20,868 - __main__ - ERROR - Exception during insert for table documents: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,869 - __main__ - INFO - Loaded documents: 0 rows loaded, 1585 rejected, 0.015s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,869 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-16 23:56:20,918 - __main__ - ERROR - Exception during insert for table prosandcons: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,919 - __main__ - INFO - Loaded prosandcons: 0 rows loaded, 16 rejected, 0.005s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,919 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-16 23:56:20,970 - __main__ - ERROR - Exception during insert for table analysis: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,972 - __main__ - INFO - Loaded analysis: 0 rows loaded, 20 rejected, 0.015s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:20,974 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-16 23:56:22,043 - __main__ - ERROR - Exception during insert for table financial_ratios: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:22,045 - __main__ - INFO - Loaded financial_ratios: 0 rows loaded, 1184 rejected, 0.017s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:22,046 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-16 23:56:22,372 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.048s, status=SUCCESS
+2026-07-16 23:56:22,373 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-16 23:56:23,569 - __main__ - ERROR - Exception during insert for table profitandloss: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:23,571 - __main__ - INFO - Loaded profitandloss: 0 rows loaded, 1276 rejected, 0.021s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:23,572 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-16 23:56:24,385 - __main__ - ERROR - Exception during insert for table balancesheet: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:24,386 - __main__ - INFO - Loaded balancesheet: 0 rows loaded, 1312 rejected, 0.013s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:24,387 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-16 23:56:24,867 - __main__ - ERROR - Exception during insert for table cashflow: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:24,869 - __main__ - INFO - Loaded cashflow: 0 rows loaded, 1187 rejected, 0.016s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:24,870 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-16 23:56:26,734 - __main__ - ERROR - Exception during insert for table stock_prices: IntegrityError: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 106, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-07-16 23:56:26,736 - __main__ - INFO - Loaded stock_prices: 0 rows loaded, 5520 rejected, 0.017s, status=INSERT_ERROR: FOREIGN KEY constraint failed
+2026-07-16 23:56:26,738 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-07-17 00:03:31,908 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-17 00:05:08,261 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-17 00:05:31,355 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-17 00:05:31,357 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-17 00:05:32,534 - __main__ - INFO - Dropping columns not in database table companies: ['roce_percentage']
+2026-07-17 00:05:32,550 - __main__ - INFO - Loaded 92 company IDs for FK validation
+2026-07-17 00:05:32,550 - __main__ - INFO - Loaded companies: 92 rows loaded, 0 rejected, 0.015s, status=SUCCESS
+2026-07-17 00:05:32,550 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-17 00:05:32,681 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.029s, status=SUCCESS
+2026-07-17 00:05:32,682 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-17 00:05:32,782 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.031s, status=SUCCESS
+2026-07-17 00:05:32,783 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-17 00:05:33,452 - __main__ - INFO - Loaded documents: 1457 rows loaded, 128 rejected, 0.044s, status=PARTIAL_REJECT
+2026-07-17 00:05:33,453 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-17 00:05:33,582 - __main__ - INFO - Loaded prosandcons: 14 rows loaded, 2 rejected, 0.027s, status=PARTIAL_REJECT
+2026-07-17 00:05:33,583 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-17 00:05:33,666 - __main__ - INFO - Loaded analysis: 16 rows loaded, 4 rejected, 0.020s, status=PARTIAL_REJECT
+2026-07-17 00:05:33,668 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-17 00:05:35,111 - __main__ - INFO - Loaded financial_ratios: 1160 rows loaded, 24 rejected, 0.044s, status=PARTIAL_REJECT
+2026-07-17 00:05:35,112 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-17 00:05:35,488 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.022s, status=SUCCESS
+2026-07-17 00:05:35,489 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-17 00:05:36,398 - __main__ - INFO - Loaded profitandloss: 1177 rows loaded, 99 rejected, 0.034s, status=PARTIAL_REJECT
+2026-07-17 00:05:36,399 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-17 00:05:37,013 - __main__ - INFO - Loaded balancesheet: 1227 rows loaded, 85 rejected, 0.027s, status=PARTIAL_REJECT
+2026-07-17 00:05:37,014 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-17 00:05:37,376 - __main__ - INFO - Loaded cashflow: 1091 rows loaded, 96 rejected, 0.026s, status=PARTIAL_REJECT
+2026-07-17 00:05:37,376 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-17 00:05:39,423 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.063s, status=SUCCESS
+2026-07-17 00:05:39,432 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-07-17 00:08:27,502 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-17 00:08:27,504 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-17 00:08:28,532 - __main__ - INFO - Loaded 92 company IDs for FK validation
+2026-07-17 00:08:28,532 - __main__ - INFO - Loaded companies: 92 rows loaded, 0 rejected, 0.020s, status=SUCCESS
+2026-07-17 00:08:28,533 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-17 00:08:28,642 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.027s, status=SUCCESS
+2026-07-17 00:08:28,643 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-17 00:08:28,730 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.025s, status=SUCCESS
+2026-07-17 00:08:28,731 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-17 00:08:29,294 - __main__ - INFO - Loaded documents: 1457 rows loaded, 128 rejected, 0.022s, status=PARTIAL_REJECT
+2026-07-17 00:08:29,295 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-17 00:08:29,360 - __main__ - INFO - Loaded prosandcons: 14 rows loaded, 2 rejected, 0.013s, status=PARTIAL_REJECT
+2026-07-17 00:08:29,360 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-17 00:08:29,436 - __main__ - INFO - Loaded analysis: 16 rows loaded, 4 rejected, 0.020s, status=PARTIAL_REJECT
+2026-07-17 00:08:29,438 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-17 00:08:30,441 - __main__ - INFO - Loaded financial_ratios: 1160 rows loaded, 24 rejected, 0.050s, status=PARTIAL_REJECT
+2026-07-17 00:08:30,441 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-17 00:08:30,854 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.029s, status=SUCCESS
+2026-07-17 00:08:30,854 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-17 00:08:32,254 - __main__ - INFO - Loaded profitandloss: 1177 rows loaded, 99 rejected, 0.046s, status=PARTIAL_REJECT
+2026-07-17 00:08:32,255 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-17 00:08:33,763 - __main__ - INFO - Loaded balancesheet: 1227 rows loaded, 85 rejected, 0.048s, status=PARTIAL_REJECT
+2026-07-17 00:08:33,764 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-17 00:08:34,577 - __main__ - INFO - Loaded cashflow: 1091 rows loaded, 96 rejected, 0.039s, status=PARTIAL_REJECT
+2026-07-17 00:08:34,578 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-17 00:08:38,275 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.095s, status=SUCCESS
+2026-07-17 00:08:38,281 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-07-17 11:47:07,520 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-07-17 11:47:07,524 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-07-17 11:47:09,553 - __main__ - INFO - Loaded 92 company IDs for FK validation
+2026-07-17 11:47:09,553 - __main__ - INFO - Loaded companies: 92 rows loaded, 0 rejected, 0.039s, status=SUCCESS
+2026-07-17 11:47:09,554 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-07-17 11:47:09,723 - __main__ - INFO - Loaded sectors: 92 rows loaded, 0 rejected, 0.026s, status=SUCCESS
+2026-07-17 11:47:09,729 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-07-17 11:47:09,858 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.032s, status=SUCCESS
+2026-07-17 11:47:09,859 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-07-17 11:47:10,742 - __main__ - INFO - Loaded documents: 1457 rows loaded, 128 rejected, 0.073s, status=PARTIAL_REJECT
+2026-07-17 11:47:10,744 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-07-17 11:47:10,901 - __main__ - INFO - Loaded prosandcons: 14 rows loaded, 2 rejected, 0.039s, status=PARTIAL_REJECT
+2026-07-17 11:47:10,902 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-07-17 11:47:11,052 - __main__ - INFO - Loaded analysis: 16 rows loaded, 4 rejected, 0.053s, status=PARTIAL_REJECT
+2026-07-17 11:47:11,053 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-07-17 11:47:12,487 - __main__ - INFO - Loaded financial_ratios: 1160 rows loaded, 24 rejected, 0.094s, status=PARTIAL_REJECT
+2026-07-17 11:47:12,488 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-07-17 11:47:13,172 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.154s, status=SUCCESS
+2026-07-17 11:47:13,174 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-07-17 11:47:14,406 - __main__ - INFO - Loaded profitandloss: 1177 rows loaded, 99 rejected, 0.046s, status=PARTIAL_REJECT
+2026-07-17 11:47:14,407 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-07-17 11:47:15,460 - __main__ - INFO - Loaded balancesheet: 1227 rows loaded, 85 rejected, 0.030s, status=PARTIAL_REJECT
+2026-07-17 11:47:15,460 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-07-17 11:47:16,069 - __main__ - INFO - Loaded cashflow: 1091 rows loaded, 96 rejected, 0.039s, status=PARTIAL_REJECT
+2026-07-17 11:47:16,073 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-07-17 11:47:19,646 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.139s, status=SUCCESS
+2026-07-17 11:47:19,657 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
