@@ -59,12 +59,33 @@ def get_latest_date() -> str | None:
     return str(row["yr"]) if row and row["yr"] else None
 
 
+# ---------------------------------------------------------------------------
+# FIX 1: Company Profile
+# ---------------------------------------------------------------------------
+
 def get_company_profile(company_id: str) -> dict | None:
+    """
+    Return company profile including symbol/ticker (company_id), sector, industry, market cap, etc.
+
+    Returns
+    -------
+    dict with keys: company_id (symbol), company_name, about_company, website,
+                    face_value, book_value, sector, industry, market_cap_cr,
+                    roe_percentage, roce_percentage
+    """
     sql = """
-        SELECT c.id, c.company_name, c.about_company, c.website,
-               c.face_value, c.book_value, c.roe_percentage, c.roce_percentage,
-               s.broad_sector AS sector, s.sub_sector AS industry,
-               m.market_cap_crore AS market_cap_cr
+        SELECT
+            c.id AS company_id,
+            c.company_name,
+            c.about_company,
+            c.website,
+            c.face_value,
+            c.book_value,
+            c.roe_percentage,
+            c.roce_percentage AS return_on_capital_employed_pct,
+            s.broad_sector AS sector,
+            s.sub_sector AS industry,
+            m.market_cap_crore AS market_cap_cr
         FROM companies c
         LEFT JOIN sectors s ON s.company_id = c.id
         LEFT JOIN market_cap m ON m.company_id = c.id
@@ -74,40 +95,113 @@ def get_company_profile(company_id: str) -> dict | None:
     return _fetchone(sql, (company_id,))
 
 
-def get_financial_ratios(company_id: str) -> list[dict]:
-    sql = """
-        SELECT year, net_profit_margin_pct, operating_profit_margin_pct,
-               return_on_equity_pct, debt_to_equity, interest_coverage,
-               asset_turnover, free_cash_flow_cr, capex_cr,
-               earnings_per_share, book_value_per_share,
-               dividend_payout_ratio_pct, total_debt_cr, cash_from_operations_cr
-        FROM financial_ratios
-        WHERE company_id = ?
-        ORDER BY year DESC
+def get_financial_ratios(company_id: str) -> pd.DataFrame:
     """
-    return _fetchall(sql, (company_id,))
+    Return financial ratios for a company as a DataFrame.
 
+    Deduplicates to one row per company per year.
+    Includes ROCE from companies table.
 
-def get_cashflow_data(company_id: str) -> list[dict]:
+    Returns
+    -------
+    pd.DataFrame with columns: year, net_profit_margin_pct, operating_profit_margin_pct,
+        return_on_equity_pct, return_on_capital_employed_pct, debt_to_equity,
+        interest_coverage, asset_turnover, free_cash_flow_cr, capex_cr,
+        earnings_per_share, book_value_per_share, dividend_payout_ratio_pct,
+        total_debt_cr, cash_from_operations_cr
+    Year is integer.
+    """
     sql = """
-        SELECT year, operating_activity, investing_activity,
+        SELECT
+            CAST(fr.year AS INTEGER) AS year,
+            fr.net_profit_margin_pct,
+            fr.operating_profit_margin_pct,
+            fr.return_on_equity_pct,
+            c.roce_percentage AS return_on_capital_employed_pct,
+            fr.debt_to_equity,
+            fr.interest_coverage,
+            fr.asset_turnover,
+            fr.free_cash_flow_cr,
+            fr.capex_cr,
+            fr.earnings_per_share,
+            fr.book_value_per_share,
+            fr.dividend_payout_ratio_pct,
+            fr.total_debt_cr,
+            fr.cash_from_operations_cr
+        FROM financial_ratios fr
+        JOIN companies c ON c.id = fr.company_id
+        WHERE fr.company_id = ?
+        ORDER BY fr.year DESC
+    """
+    df = _fetch_df(sql, (company_id,))
+    # Ensure year is integer
+    if not df.empty:
+        df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
+        # Deduplicate: keep first row per year
+        df = df.drop_duplicates(subset=["year"], keep="first")
+    return df
+
+
+def get_cashflow_data(company_id: str) -> pd.DataFrame:
+    """Return cash flow data for a company as a DataFrame."""
+    sql = """
+        SELECT CAST(year AS INTEGER) AS year, operating_activity, investing_activity,
                financing_activity, net_cash_flow
         FROM cashflow
         WHERE company_id = ?
         ORDER BY year DESC
     """
-    return _fetchall(sql, (company_id,))
+    df = _fetch_df(sql, (company_id,))
+    # Ensure year is nullable integer (Int64) to handle any NaN values
+    if not df.empty:
+        df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
+    return df
 
 
-def get_capital_alloc_data(company_id: str) -> list[dict]:
-    sql = """
-        SELECT year, return_on_equity_pct, debt_to_equity,
-               free_cash_flow_cr, total_debt_cr, cash_from_operations_cr
-        FROM financial_ratios
-        WHERE company_id = ?
-        ORDER BY year DESC
+def get_capital_alloc_data(company_id: str) -> pd.DataFrame:
     """
-    return _fetchall(sql, (company_id,))
+    Return capital allocation data for a company as a DataFrame.
+
+    Deduplicates to one row per company per year.
+
+    Returns
+    -------
+    pd.DataFrame with columns: year, return_on_equity_pct, debt_to_equity,
+        free_cash_flow_cr, total_debt_cr, cash_from_operations_cr,
+        return_on_capital_employed_pct, cash_conversion_ratio
+        Year is integer.
+    """
+    sql = """
+        SELECT
+            CAST(fr.year AS INTEGER) AS year,
+            fr.return_on_equity_pct,
+            fr.debt_to_equity,
+            fr.free_cash_flow_cr,
+            fr.total_debt_cr,
+            fr.cash_from_operations_cr,
+            c.roce_percentage AS return_on_capital_employed_pct,
+            CASE
+                WHEN pl.net_profit IS NOT NULL AND pl.net_profit > 0
+                THEN CAST(fr.cash_from_operations_cr AS REAL) / CAST(pl.net_profit AS REAL)
+                ELSE NULL
+            END AS cash_conversion_ratio
+        FROM financial_ratios fr
+        JOIN companies c ON c.id = fr.company_id
+        LEFT JOIN profitandloss pl
+            ON pl.company_id = fr.company_id
+            AND CAST(pl.year AS INTEGER) = CAST(fr.year AS INTEGER)
+        WHERE fr.company_id = ?
+        ORDER BY fr.year DESC
+    """
+    df = _fetch_df(sql, (company_id,))
+    # Ensure year is integer
+    if not df.empty:
+        df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
+        # Drop rows with null year
+        df = df.dropna(subset=["year"])
+        # Deduplicate: keep first row per year
+        df = df.drop_duplicates(subset=["year"], keep="first")
+    return df
 
 
 # ---------------------------------------------------------------------------
@@ -131,10 +225,9 @@ def get_home_kpis(year: int) -> dict[str, Any]:
 
     Returns
     -------
-    dict with keys:
-        avg_roe, median_pe, median_debt_equity, total_companies,
-        median_revenue_cagr_5yr, debt_free_companies
-        Each value is a float, int, or "N/A".
+    dict with keys: avg_roe, median_pe, median_debt_equity, total_companies,
+                    median_revenue_cagr_5yr, debt_free_companies
+                    Each value is float, int, or "N/A".
     """
     result: dict[str, Any] = {}
 
@@ -145,7 +238,7 @@ def get_home_kpis(year: int) -> dict[str, Any]:
     )
     result["total_companies"] = row["cnt"] if row else 0
 
-    # --- Average ROE (winsorized at P5/P95 to handle data outliers) ---
+    # --- Average ROE (winsorized at P5/P95) ---
     rows = _fetchall(
         f"""
         SELECT DISTINCT company_id, return_on_equity_pct
@@ -203,11 +296,7 @@ def get_home_kpis(year: int) -> dict[str, Any]:
 
 
 def _compute_median_revenue_cagr(target_year: int) -> float | str:
-    """
-    Compute 5-year Revenue CAGR from profitandloss.
-
-    CAGR = (sales_current / sales_5yr_ago) ** (1/5) - 1
-    """
+    """Compute 5-year Revenue CAGR from profitandloss."""
     past_year = target_year - 5
     sql = """
         SELECT a.company_id,
@@ -251,7 +340,7 @@ def get_top_companies(year: int, limit: int = 5) -> list[dict]:
     """
     Return top-N companies by composite quality score for the given year.
 
-    Composite score weights (from screener/engine.py):
+    Composite score weights:
       35% profitability (ROE + OPM)
       30% cash quality (FCF + CFO)
       20% growth (CAGR-based)
@@ -359,10 +448,7 @@ def get_top_companies(year: int, limit: int = 5) -> list[dict]:
 
 
 def _compute_growth_scores_for_year(company_ids: list[str], target_year: int) -> dict[str, float]:
-    """
-    Compute 5-year revenue CAGR for the given companies and return
-    winsorized-scaled growth scores.
-    """
+    """Compute 5-year revenue CAGR for the given companies and return winsorized-scaled growth scores."""
     past_year = target_year - 5
     if not company_ids:
         return {}
@@ -410,103 +496,24 @@ def _compute_growth_scores_for_year(company_ids: list[str], target_year: int) ->
 
 
 # ---------------------------------------------------------------------------
-# Stub / minimal implementations for pages imported via __init__.py
+# FIX 2: Screener
 # ---------------------------------------------------------------------------
 
-def get_companies() -> list[dict]:
-    """Alias for get_company_list."""
-    return get_company_list()
-
-
-def get_financial_trends(company_id: str) -> list[dict]:
-    """Return P&L trend data for a company over all available years."""
-    sql = """
-        SELECT year, sales, expenses, operating_profit, opm_percentage,
-               net_profit, eps
-        FROM profitandloss
-        WHERE company_id = ? AND year IS NOT NULL
-        ORDER BY year ASC
-    """
-    return _fetchall(sql, (company_id,))
-
-
-def get_sector_aggregates() -> pd.DataFrame:
-    """Return sector-level aggregates across the most recent market_cap year."""
-    latest_year_row = _fetchone("SELECT MAX(year) AS yr FROM market_cap")
-    if not latest_year_row or not latest_year_row["yr"]:
-        return pd.DataFrame()
-    yr = latest_year_row["yr"]
-    sql = f"""
-        SELECT s.broad_sector AS sector,
-               COUNT(DISTINCT s.company_id) AS company_count,
-               AVG(fr.return_on_equity_pct) AS avg_roe,
-               AVG(fr.debt_to_equity) AS avg_debt_equity,
-               AVG(m.pe_ratio) AS avg_pe
-        FROM sectors s
-        JOIN financial_ratios fr ON fr.company_id = s.company_id
-          AND {_fiscal_year_condition('fr.year', yr)}
-        LEFT JOIN market_cap m ON m.company_id = s.company_id AND m.year = ?
-        WHERE s.broad_sector IS NOT NULL
-        GROUP BY s.broad_sector
-    """
-    return _fetch_df(sql, (str(yr), yr))
-
-
-def get_peer_groups() -> list[dict]:
-    """Return distinct peer group names."""
-    return _fetchall("SELECT DISTINCT peer_group_name FROM peer_groups ORDER BY peer_group_name")
-
-
-def get_peer_group_members(peer_group_name: str) -> list[dict]:
-    """Return company IDs in a peer group."""
-    sql = """
-        SELECT pg.company_id, c.company_name
-        FROM peer_groups pg
-        JOIN companies c ON c.id = pg.company_id
-        WHERE pg.peer_group_name = ?
-        ORDER BY c.company_name
-    """
-    return _fetchall(sql, (peer_group_name,))
-
-
-def get_peer_percentiles(company_id: str, peer_group_name: str) -> list[dict]:
-    """Compute percentile rankings for a company within its peer group."""
-    sql = """
-        SELECT pg.company_id, c.company_name,
-               fr.return_on_equity_pct, fr.debt_to_equity,
-               fr.operating_profit_margin_pct, fr.interest_coverage,
-               m.pe_ratio
-        FROM peer_groups pg
-        JOIN companies c ON c.id = pg.company_id
-        JOIN financial_ratios fr ON fr.company_id = pg.company_id
-        LEFT JOIN market_cap m ON m.company_id = pg.company_id
-        WHERE pg.peer_group_name = ?
-          AND fr.year = (SELECT MAX(fr2.year) FROM financial_ratios fr2 WHERE fr2.company_id = pg.company_id)
-    """
-    rows = _fetchall(sql, (peer_group_name,))
-    if not rows:
-        return []
-
-    df = pd.DataFrame(rows)
-    metrics = ["return_on_equity_pct", "debt_to_equity", "operating_profit_margin_pct", "interest_coverage", "pe_ratio"]
-
-    result_rows = []
-    for _, r in df.iterrows():
-        row: dict = {"company_id": r["company_id"], "company_name": r["company_name"]}
-        for m in metrics:
-            vals = df[m].dropna()
-            if len(vals) > 0:
-                pct_rank = (vals < r[m]).sum() / len(vals) * 100 if pd.notna(r[m]) else None
-                row[m] = round(pct_rank, 1) if pct_rank is not None else None
-            else:
-                row[m] = None
-        result_rows.append(row)
-
-    return result_rows
-
-
 def get_screener_results(filters: dict | None = None, sort_by: str = "company_id") -> pd.DataFrame:
-    """Return screener results for the most recent year."""
+    """
+    Return screener results for the most recent year.
+
+    Accepts filters in {"ROE": {"min": 15, "max": 30}} format (min/max keys).
+
+    Returns
+    -------
+    pd.DataFrame with columns: company_id, company_name, sector,
+        return_on_equity_pct, debt_to_equity, operating_profit_margin_pct,
+        interest_coverage, free_cash_flow_cr, cash_from_operations_cr,
+        net_profit_margin_pct, compounded_sales_growth, compounded_profit_growth,
+        dividend_yield_pct, pe_ratio, pb_ratio, net_profit,
+        composite_quality_score, sector_relative_score
+    """
     latest = _fetchone("SELECT MAX(year) AS yr FROM market_cap")
     yr = latest["yr"] if latest else 2024
     sql = f"""
@@ -515,24 +522,141 @@ def get_screener_results(filters: dict | None = None, sort_by: str = "company_id
                fr.return_on_equity_pct, fr.debt_to_equity,
                fr.operating_profit_margin_pct, fr.interest_coverage,
                fr.free_cash_flow_cr, fr.cash_from_operations_cr,
-               fr.net_profit_margin_pct
+               fr.net_profit_margin_pct,
+               m.pe_ratio, m.pb_ratio, m.dividend_yield_pct,
+               a.compounded_sales_growth, a.compounded_profit_growth,
+               pl.net_profit
         FROM companies c
         JOIN sectors s ON s.company_id = c.id
         JOIN financial_ratios fr ON fr.company_id = c.id
           AND {_fiscal_year_condition('fr.year', yr)}
+        LEFT JOIN market_cap m ON m.company_id = c.id AND m.year = ?
+        LEFT JOIN analysis a ON a.company_id = c.id
+        LEFT JOIN profitandloss pl ON pl.company_id = c.id
     """
-    df = _fetch_df(sql, (str(yr),))
-    if not df.empty and filters:
-        for col, (op, val) in filters.items():
-            if col in df.columns:
-                if op == "gt":
-                    df = df[df[col] > val]
-                elif op == "lt":
-                    df = df[df[col] < val]
-                elif op == "between":
-                    df = df[df[col].between(val[0], val[1])]
-    if not df.empty:
+    df = _fetch_df(sql, (str(yr), yr))
+    if df.empty:
+        return df
+
+    # Parse CAGR strings ("10 Years: 21%" -> 21.0)
+    for col in ["compounded_sales_growth", "compounded_profit_growth"]:
+        if col in df.columns:
+            df[col] = df[col].astype(str).str.extract(r"(\d+\.?\d*)%?", expand=False)
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    # Deduplicate: keep first row per company for tables with multiple rows
+    for col in ["net_profit", "compounded_sales_growth", "compounded_profit_growth"]:
+        if col in df.columns:
+            df[col] = df.groupby("company_id", sort=False)[col].transform("first")
+    df = df.drop_duplicates(subset=["company_id"], keep="first")
+
+    # --- Compute composite scores (replicating engine.py logic) ---
+    def _winsorize_scale(s, higher_better=True):
+        s = pd.to_numeric(s, errors="coerce")
+        valid = s.dropna()
+        if len(valid) == 0:
+            return pd.Series(np.nan, index=s.index)
+        p10, p90 = valid.quantile([0.10, 0.90])
+        clipped = s.clip(lower=p10, upper=p90)
+        mn, mx = clipped.min(), clipped.max()
+        if mx == mn:
+            return pd.Series(50.0, index=s.index)
+        scaled = (clipped - mn) / (mx - mn) * 100.0
+        if not higher_better:
+            scaled = 100.0 - scaled
+        return scaled
+
+    # Profitability (35%)
+    roe_s = _winsorize_scale(df["return_on_equity_pct"], True)
+    npm_s = _winsorize_scale(df["net_profit_margin_pct"], True)
+    profitability = 0.6 * roe_s + 0.4 * npm_s
+
+    # Cash Quality (30%)
+    fcf_s = _winsorize_scale(df["free_cash_flow_cr"], True)
+    cfo = pd.to_numeric(df["cash_from_operations_cr"], errors="coerce")
+    pat = pd.to_numeric(df["net_profit"], errors="coerce").replace(0, np.nan)
+    cfo_pat = (cfo / pat).replace([np.inf, -np.inf], np.nan)
+    cfo_pat_s = _winsorize_scale(cfo_pat, True)
+    fcf_pos = (pd.to_numeric(df["free_cash_flow_cr"], errors="coerce") > 0).astype(float) * 100.0
+    cash_quality = 0.5 * fcf_s + (1/3) * cfo_pat_s + (1/6) * fcf_pos
+
+    # Growth (20%)
+    rev_cagr_s = _winsorize_scale(df["compounded_sales_growth"], True)
+    pat_cagr_s = _winsorize_scale(df["compounded_profit_growth"], True)
+    growth = 0.5 * rev_cagr_s + 0.5 * pat_cagr_s
+
+    # Leverage (15%)
+    de_s = _winsorize_scale(df["debt_to_equity"], False)
+    ic = df["interest_coverage"].apply(
+        lambda x: float("nan") if pd.isna(x) else (
+            df["interest_coverage"].max() if isinstance(x, str) and "debt free" in x.strip().lower()
+            else pd.to_numeric(x, errors="coerce")
+        )
+    )
+    ic_s = _winsorize_scale(ic, True)
+    leverage = (2/3) * de_s + (1/3) * ic_s
+
+    # Composite
+    df["composite_quality_score"] = (
+        0.35 * profitability + 0.30 * cash_quality + 0.20 * growth + 0.15 * leverage
+    )
+
+    # Sector-relative score
+    sector_scores = df.groupby("sector", group_keys=False, sort=False).apply(
+        lambda g: (
+            0.35 * (0.6 * _winsorize_scale(g["return_on_equity_pct"], True)
+                    + 0.4 * _winsorize_scale(g["net_profit_margin_pct"], True))
+            + 0.30 * (0.5 * _winsorize_scale(g["free_cash_flow_cr"], True)
+                      + (1/3) * _winsorize_scale(
+                          pd.to_numeric(g["cash_from_operations_cr"], errors="coerce")
+                          / pd.to_numeric(g["net_profit"], errors="coerce").replace(0, np.nan), True)
+                      + (1/6) * (pd.to_numeric(g["free_cash_flow_cr"], errors="coerce") > 0).astype(float) * 100.0)
+            + 0.20 * (0.5 * _winsorize_scale(g["compounded_sales_growth"], True)
+                      + 0.5 * _winsorize_scale(g["compounded_profit_growth"], True))
+            + 0.15 * ((2/3) * _winsorize_scale(g["debt_to_equity"], False)
+                      + (1/3) * _winsorize_scale(g["interest_coverage"], True))
+        ),
+        include_groups=False
+    )
+    if len(sector_scores) == len(df):
+        df["sector_relative_score"] = sector_scores.values
+    else:
+        df["sector_relative_score"] = np.nan
+
+    # --- Apply filters ({"ROE": {"min": 15, "max": 30}} format) ---
+    FILTER_COLUMN_MAP = {
+        "ROE": "return_on_equity_pct",
+        "Free Cash Flow": "free_cash_flow_cr",
+        "Revenue CAGR": "compounded_sales_growth",
+        "PAT CAGR": "compounded_profit_growth",
+        "Dividend Yield": "dividend_yield_pct",
+        "Debt to Equity": "debt_to_equity",
+        "PE": "pe_ratio",
+        "PB": "pb_ratio",
+        "Interest Coverage": "interest_coverage",
+        "Market Cap": "market_cap_crore",
+    }
+
+    if filters:
+        for display_name, condition in filters.items():
+            col = FILTER_COLUMN_MAP.get(display_name, display_name)
+            if col not in df.columns:
+                continue
+            if "min" in condition:
+                min_val = condition["min"]
+                if min_val is not None:
+                    df = df[pd.to_numeric(df[col], errors="coerce") >= min_val]
+            if "max" in condition:
+                max_val = condition["max"]
+                if max_val is not None:
+                    df = df[pd.to_numeric(df[col], errors="coerce") <= max_val]
+
+    if sort_by in df.columns:
         df = df.sort_values(sort_by, ascending=False)
+
+    # Remove completely empty columns
+    df = df.dropna(axis=1, how="all")
+
     return df
 
 
@@ -548,39 +672,257 @@ def get_preset_filters() -> list[dict]:
     ]
 
 
-def get_ratios(company_id: str) -> list[dict]:
-    """Alias for get_financial_ratios."""
+# ---------------------------------------------------------------------------
+# FIX 3: Peer Comparison
+# ---------------------------------------------------------------------------
+
+def get_peer_groups(company_id: str | None = None) -> list[dict] | str:
+    """
+    Return peer group name for a company, or list of all peer groups.
+
+    Parameters
+    ----------
+    company_id : str, optional
+        If provided, returns the peer group name for that company as a string.
+        If None, returns list of all distinct peer group names.
+
+    Returns
+    -------
+    str or list[dict]
+        Peer group name string when company_id is given,
+        list of dicts with 'peer_group_name' key otherwise.
+    """
+    if company_id:
+        row = _fetchone(
+            "SELECT peer_group_name FROM peer_groups WHERE company_id = ?",
+            (company_id,),
+        )
+        return row["peer_group_name"] if row else ""
+    return _fetchall("SELECT DISTINCT peer_group_name FROM peer_groups ORDER BY peer_group_name")
+
+
+def get_peer_percentiles(company_id: str) -> dict:
+    """
+    Compute percentile rankings for a company within its peer group.
+
+    Restricted to the selected peer group only.
+
+    Returns
+    -------
+    dict with keys: roe_percentile, net_profit_margin_percentile, debt_to_equity_percentile,
+                    free_cash_flow_percentile, pe_percentile, pb_percentile,
+                    overall_peer_score, peer_group_name
+    """
+    # Find this company's peer group
+    peer_row = _fetchone(
+        "SELECT peer_group_name FROM peer_groups WHERE company_id = ?",
+        (company_id,),
+    )
+    if not peer_row:
+        return {"overall_peer_score": None}
+    peer_group_name = peer_row["peer_group_name"]
+
+    # Get latest year
+    latest = _fetchone("SELECT MAX(year) AS yr FROM market_cap")
+    yr = latest["yr"] if latest else 2024
+
+    # Get all companies in THIS peer group with their financial data
+    sql = """
+        SELECT pg.company_id, c.company_name,
+               fr.return_on_equity_pct, fr.net_profit_margin_pct,
+               fr.debt_to_equity, fr.operating_profit_margin_pct,
+               fr.interest_coverage, fr.free_cash_flow_cr,
+               m.pe_ratio, m.pb_ratio, m.dividend_yield_pct
+        FROM peer_groups pg
+        JOIN companies c ON c.id = pg.company_id
+        JOIN financial_ratios fr ON fr.company_id = pg.company_id
+            AND CAST(fr.year AS INTEGER) = ?
+        LEFT JOIN market_cap m ON m.company_id = pg.company_id AND m.year = ?
+        WHERE pg.peer_group_name = ?
+    """
+    rows = _fetchall(sql, (yr, yr, peer_group_name))
+    if not rows:
+        return {"overall_peer_score": None}
+
+    df = pd.DataFrame(rows)
+
+    # Metrics to compute percentiles for
+    METRICS = {
+        "return_on_equity_pct": "roe_percentile",
+        "net_profit_margin_pct": "net_profit_margin_percentile",
+        "debt_to_equity": "debt_to_equity_percentile",
+        "free_cash_flow_cr": "free_cash_flow_percentile",
+        "pe_ratio": "pe_percentile",
+        "pb_ratio": "pb_percentile",
+    }
+    LOWER_BETTER = {"debt_to_equity_percentile", "pe_percentile", "pb_percentile"}
+
+    # Find the target company row
+    company_row = df[df["company_id"] == company_id]
+    if company_row.empty:
+        return {"overall_peer_score": None}
+    company_idx = company_row.index[0]
+
+    # Compute percentiles
+    result = {"peer_group_name": peer_group_name}
+    for metric_col, pct_col in METRICS.items():
+        if metric_col not in df.columns:
+            continue
+        vals = pd.to_numeric(df[metric_col], errors="coerce")
+        valid = vals.dropna()
+        if len(valid) == 0 or pd.isna(vals.iloc[company_idx]):
+            result[pct_col] = None
+            continue
+        pct = (valid < vals.iloc[company_idx]).sum() / len(valid) * 100
+        if pct_col in LOWER_BETTER:
+            pct = 100 - pct
+        result[pct_col] = round(pct, 1)
+
+    # Overall peer score: average of all available percentiles
+    pct_values = [v for k, v in result.items() if k.endswith("_percentile") and v is not None]
+    result["overall_peer_score"] = round(sum(pct_values) / len(pct_values), 1) if pct_values else None
+
+    return result
+
+
+def get_peer_group_members(peer_group_name: str) -> list[dict]:
+    """Return company IDs in a peer group."""
+    sql = """
+        SELECT pg.company_id, c.company_name
+        FROM peer_groups pg
+        JOIN companies c ON c.id = pg.company_id
+        WHERE pg.peer_group_name = ?
+        ORDER BY c.company_name
+    """
+    return _fetchall(sql, (peer_group_name,))
+
+
+# ---------------------------------------------------------------------------
+# FIX 4: Financial Trends
+# ---------------------------------------------------------------------------
+
+def get_financial_trends(company_id: str) -> pd.DataFrame:
+    """
+    Return P&L trend data for a company over all available years.
+
+    Deduplicates to one row per company per year.
+
+    Returns
+    -------
+    pd.DataFrame with columns: year, sales, expenses, operating_profit,
+        operating_profit_margin_pct, net_profit, eps, return_on_equity_pct,
+        debt_to_equity, free_cash_flow_cr, net_profit_margin_pct
+    Year is integer.
+    """
+    sql = """
+        SELECT
+            CAST(pl.year AS INTEGER) AS year,
+            pl.sales,
+            pl.expenses,
+            pl.operating_profit,
+            pl.opm_percentage AS operating_profit_margin_pct,
+            pl.net_profit,
+            pl.eps,
+            fr.return_on_equity_pct,
+            fr.debt_to_equity,
+            fr.free_cash_flow_cr,
+            fr.net_profit_margin_pct
+        FROM profitandloss pl
+        LEFT JOIN financial_ratios fr
+            ON fr.company_id = pl.company_id
+            AND CAST(fr.year AS INTEGER) = CAST(pl.year AS INTEGER)
+        WHERE pl.company_id = ? AND pl.year IS NOT NULL
+        ORDER BY year ASC
+    """
+    df = _fetch_df(sql, (company_id,))
+    # Ensure year is integer
+    if not df.empty:
+        df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
+        # Deduplicate: keep first row per year
+        df = df.drop_duplicates(subset=["year"], keep="first")
+    return df
+
+
+# ---------------------------------------------------------------------------
+# FIX 5: Sector Analysis
+# ---------------------------------------------------------------------------
+
+def get_sector_aggregates() -> pd.DataFrame:
+    """
+    Return sector-level aggregates across the most recent market_cap year.
+
+    Returns
+    -------
+    pd.DataFrame with columns: sector, company_count, avg_roe_pct, avg_roce_pct,
+        avg_debt_to_equity, avg_net_profit_margin_pct, avg_pe_ratio, total_market_cap_cr
+    """
+    latest_year_row = _fetchone("SELECT MAX(year) AS yr FROM market_cap")
+    if not latest_year_row or not latest_year_row["yr"]:
+        return pd.DataFrame()
+    yr = latest_year_row["yr"]
+    sql = f"""
+        SELECT
+            s.broad_sector AS sector,
+            COUNT(DISTINCT s.company_id) AS company_count,
+            ROUND(AVG(fr.return_on_equity_pct), 2) AS avg_roe_pct,
+            ROUND(AVG(c.roce_percentage), 2) AS avg_roce_pct,
+            ROUND(AVG(fr.debt_to_equity), 2) AS avg_debt_to_equity,
+            ROUND(AVG(fr.net_profit_margin_pct), 2) AS avg_net_profit_margin_pct,
+            ROUND(AVG(m.pe_ratio), 2) AS avg_pe_ratio,
+            ROUND(SUM(m.market_cap_crore), 2) AS total_market_cap_cr
+        FROM sectors s
+        JOIN financial_ratios fr ON fr.company_id = s.company_id
+          AND {_fiscal_year_condition('fr.year', yr)}
+        JOIN companies c ON c.id = s.company_id
+        LEFT JOIN market_cap m ON m.company_id = s.company_id AND m.year = ?
+        WHERE s.broad_sector IS NOT NULL
+        GROUP BY s.broad_sector
+    """
+    return _fetch_df(sql, (str(yr), yr))
+
+
+# ---------------------------------------------------------------------------
+# Aliases for backward compatibility
+# ---------------------------------------------------------------------------
+
+def get_companies() -> list[dict]:
+    """Alias for get_company_list."""
+    return get_company_list()
+
+
+def get_ratios(company_id: str) -> pd.DataFrame:
+    """Alias for get_financial_ratios returning DataFrame."""
     return get_financial_ratios(company_id)
 
 
-def get_pl(company_id: str) -> list[dict]:
-    """Return P&L data for a company."""
+def get_pl(company_id: str) -> pd.DataFrame:
+    """Return P&L data for a company as DataFrame."""
     sql = """
-        SELECT year, sales, expenses, operating_profit, opm_percentage,
+        SELECT CAST(year AS INTEGER) AS year, sales, expenses, operating_profit, opm_percentage,
                other_income, interest, depreciation, profit_before_tax,
                tax_percentage, net_profit, eps, dividend_payout
         FROM profitandloss
         WHERE company_id = ? AND year IS NOT NULL
         ORDER BY year DESC
     """
-    return _fetchall(sql, (company_id,))
+    return _fetch_df(sql, (company_id,))
 
 
-def get_bs(company_id: str) -> list[dict]:
-    """Return balance sheet data for a company."""
+def get_bs(company_id: str) -> pd.DataFrame:
+    """Return balance sheet data for a company as DataFrame."""
     sql = """
-        SELECT year, equity_capital, reserves, borrowings,
+        SELECT CAST(year AS INTEGER) AS year, equity_capital, reserves, borrowings,
                other_liabilities, total_liabilities,
                fixed_assets, cwip, investments, other_asset, total_assets
         FROM balancesheet
         WHERE company_id = ? AND year IS NOT NULL
         ORDER BY year DESC
     """
-    return _fetchall(sql, (company_id,))
+    return _fetch_df(sql, (company_id,))
 
 
-def get_cf(company_id: str) -> list[dict]:
-    """Alias for get_cashflow_data."""
+def get_cf(company_id: str) -> pd.DataFrame:
+    """Alias for get_cashflow_data returning DataFrame."""
     return get_cashflow_data(company_id)
 
 
@@ -609,13 +951,13 @@ def get_peers(company_id: str) -> list[dict]:
     return _fetchall(sql, (company_id,))
 
 
-def get_valuation(company_id: str) -> list[dict]:
-    """Return valuation data for a company."""
+def get_valuation(company_id: str) -> pd.DataFrame:
+    """Return valuation data for a company as DataFrame."""
     sql = """
-        SELECT year, market_cap_crore, enterprise_value_crore,
+        SELECT CAST(year AS INTEGER) AS year, market_cap_crore, enterprise_value_crore,
                pe_ratio, pb_ratio, ev_ebitda, dividend_yield_pct
         FROM market_cap
         WHERE company_id = ?
         ORDER BY year DESC
     """
-    return _fetchall(sql, (company_id,))
+    return _fetch_df(sql, (company_id,))

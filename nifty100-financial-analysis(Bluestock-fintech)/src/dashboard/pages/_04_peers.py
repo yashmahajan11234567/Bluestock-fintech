@@ -6,7 +6,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-from src.dashboard.utils.db import get_company_list, get_peer_groups, get_peer_percentiles
+from src.dashboard.utils.db import get_company_list, get_peer_groups, get_peer_percentiles, get_peer_group_members
 from src.screener.charts import create_peer_radar_chart, save_radar_chart
 
 
@@ -77,12 +77,6 @@ def render() -> None:
         if peer_list:
             df_peers = pd.DataFrame(peer_list)
             st.dataframe(df_peers, use_container_width=True, hide_index=True)
-
-
-def get_peer_group_members(peer_group: str) -> list:
-    """Get list of companies in the peer group."""
-    from src.dashboard.utils.db import get_peer_group_members as db_get_members
-    return db_get_members(peer_group)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,16 @@ This module configures Streamlit, sets up sidebar navigation to all 8 pages,
 and delegates rendering to the selected page's render() function.
 """
 
+import sys
+from pathlib import Path
+
+# Ensure project root is on sys.path so that "from src..." imports resolve correctly.
+# Python's default sys.path behavior (adding CWD) is not reliable under Streamlit's
+# script runner (which uses exec()), so we add the root explicitly.
+_project_root = str(Path(__file__).resolve().parent.parent.parent)
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
+
 import streamlit as st
 
 # Import page render functions
