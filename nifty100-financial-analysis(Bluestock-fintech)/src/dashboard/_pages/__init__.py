@@ -4,14 +4,14 @@ Dashboard pages package for Nifty 100 Analytics.
 Each page module exposes a `render()` function that displays the page content.
 """
 
-from src.dashboard.pages._01_home import render as home_render
-from src.dashboard.pages._02_profile import render as profile_render
-from src.dashboard.pages._03_screener import render as screener_render
-from src.dashboard.pages._04_peers import render as peers_render
-from src.dashboard.pages._05_trends import render as trends_render
-from src.dashboard.pages._06_sectors import render as sectors_render
-from src.dashboard.pages._07_capital import render as capital_render
-from src.dashboard.pages._08_reports import render as reports_render
+from src.dashboard._pages._01_home import render as home_render
+from src.dashboard._pages._02_profile import render as profile_render
+from src.dashboard._pages._03_screener import render as screener_render
+from src.dashboard._pages._04_peers import render as peers_render
+from src.dashboard._pages._05_trends import render as trends_render
+from src.dashboard._pages._06_sectors import render as sectors_render
+from src.dashboard._pages._07_capital import render as capital_render
+from src.dashboard._pages._08_reports import render as reports_render
 
 # Create module-like objects with render function
 class _Module:

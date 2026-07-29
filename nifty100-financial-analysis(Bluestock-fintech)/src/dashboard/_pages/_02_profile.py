@@ -14,6 +14,11 @@ from src.dashboard.utils.db import (
 )
 
 
+def _has_data(df: pd.DataFrame | None) -> bool:
+    """Check if DataFrame is not None and not empty."""
+    return df is not None and not df.empty
+
+
 def render() -> None:
     """Render the Company Profile page."""
     st.title("🏢 Company Profile")
@@ -58,13 +63,12 @@ def render() -> None:
         tab1, tab2, tab3, tab4 = st.tabs(["📊 Financial Ratios", "💰 Cash Flow", "🏦 Capital Allocation", "📈 Raw Financials"])
 
         with tab1:
-            if ratios:
-                df_ratios = pd.DataFrame(ratios)
-                st.dataframe(df_ratios, use_container_width=True, hide_index=True)
+            if _has_data(ratios):
+                st.dataframe(ratios, use_container_width=True, hide_index=True)
 
                 # Key ratio cards
-                if len(df_ratios) > 0:
-                    latest = df_ratios.iloc[0]
+                if len(ratios) > 0:
+                    latest = ratios.iloc[0]
                     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
                     with kpi1:
                         st.metric("ROE (%)", f"{latest.get('return_on_equity_pct', 0):.1f}" if latest.get('return_on_equity_pct') else "N/A")
@@ -78,16 +82,14 @@ def render() -> None:
                 st.info("No ratio data available.")
 
         with tab2:
-            if cashflow:
-                df_cf = pd.DataFrame(cashflow)
-                st.dataframe(df_cf, use_container_width=True, hide_index=True)
+            if _has_data(cashflow):
+                st.dataframe(cashflow, use_container_width=True, hide_index=True)
             else:
                 st.info("No cash flow data available.")
 
         with tab3:
-            if capital:
-                df_cap = pd.DataFrame(capital)
-                st.dataframe(df_cap, use_container_width=True, hide_index=True)
+            if _has_data(capital):
+                st.dataframe(capital, use_container_width=True, hide_index=True)
             else:
                 st.info("No capital allocation data available.")
 

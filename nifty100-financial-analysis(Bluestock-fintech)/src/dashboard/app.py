@@ -18,7 +18,7 @@ if _project_root not in sys.path:
 import streamlit as st
 
 # Import page render functions
-from src.dashboard.pages import (
+from src.dashboard._pages import (
     home,
     profile,
     screener,
