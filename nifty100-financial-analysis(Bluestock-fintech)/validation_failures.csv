@@ -1,1 +1,6 @@
 company_id,issue
+SBIN,zero_pro
+BRITANNIA,zero_con
+MISSING,Finance,sectors,FK_VIOLATION
+BAD1,Tech,sectors,FK_VIOLATION
+BAD2,Finance,sectors,FK_VIOLATION

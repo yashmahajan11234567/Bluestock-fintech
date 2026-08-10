@@ -1,8 +1,11 @@
 """
 Test suite for the Auto Pros/Cons Generator (Day 30).
 
-Tests cover all 26 rules (13 Pro, 13 Con), threshold behavior,
-confidence calculation, and output validation.
+Tests cover all 24 rules (12 Pro, 12 Con), threshold behavior,
+confidence calculation, output validation, and rule ID enforcement.
+
+PRO_13 and CON_13 are explicitly NOT part of the Sprint 5 specification.
+Tests confirm that unsupported rule IDs cannot be generated.
 """
 
 import math
@@ -32,7 +35,6 @@ from src.nlp.pros_cons_generator import (
     rule_pro_10_roe_improving_3y,
     rule_pro_11_revenue_cagr_gt_pat_cagr,
     rule_pro_12_assets_growing_declining_debt,
-    rule_pro_13_profit_margin_sustained,
     rule_con_1_debt_to_equity_high,
     rule_con_2_fcf_negative_3y,
     rule_con_3_opm_declining_3y,
@@ -45,7 +47,6 @@ from src.nlp.pros_cons_generator import (
     rule_con_10_roce_low,
     rule_con_11_net_debt_3x_ebitda,
     rule_con_12_revenue_cagr_under_5pct,
-    rule_con_13_pe_ratio_high,
 )
 
 
@@ -476,41 +477,9 @@ class TestProRules:
         signal = rule_pro_12_assets_growing_declining_debt(data)
         assert signal is None
 
-    def test_pro_13_profit_margin_sustained(self):
-        """Test PRO_13: Sustained net profit margin above 10% for 3+ years."""
-        fr = pd.DataFrame({
-            'year': [2024, 2023, 2022, 2021, 2020],
-            'net_profit_margin_pct': [15.0, 14.0, 13.0, 12.0, 10.0],
-        })
-        data = make_company_data(financial_ratios=fr)
-        signal = rule_pro_13_profit_margin_sustained(data)
-        assert signal is not None
-        assert signal.type == "pro"
-        assert signal.rule_id == "PRO_13"
-
-    def test_pro_13_profit_margin_below_threshold(self):
-        """Test PRO_13: Net profit margin below 10% should not trigger."""
-        fr = pd.DataFrame({
-            'year': [2024, 2023, 2022],
-            'net_profit_margin_pct': [5.0, 4.0, 3.0],
-        })
-        data = make_company_data(financial_ratios=fr)
-        signal = rule_pro_13_profit_margin_sustained(data)
-        assert signal is None
-
-    def test_pro_13_profit_margin_insufficient_years(self):
-        """Test PRO_13: Insufficient consecutive years should not trigger."""
-        fr = pd.DataFrame({
-            'year': [2024, 2023, 2022],
-            'net_profit_margin_pct': [15.0, 5.0, 15.0],  # Only 1 consecutive year above 10% from latest
-        })
-        data = make_company_data(financial_ratios=fr)
-        signal = rule_pro_13_profit_margin_sustained(data)
-        assert signal is None
-
 
 class TestConRules:
-    """Test all 13 Con rules."""
+    """Test all 12 Con rules."""
 
     def test_con_1_debt_to_equity_high(self):
         """Test CON_1: D/E > 2.0 for non-financial companies."""
@@ -827,37 +796,47 @@ class TestConRules:
         signal = rule_con_12_revenue_cagr_under_5pct(data)
         assert signal is None  # ~5% is not < 5%
 
-    def test_con_13_pe_ratio_high(self):
-        """Test CON_13: PE ratio > 50x indicating overvaluation."""
-        mc = pd.DataFrame({
-            'year': [2024],
-            'pe_ratio': [63.91],
-        })
-        data = make_company_data(market_cap=mc)
-        signal = rule_con_13_pe_ratio_high(data)
-        assert signal is not None
-        assert signal.type == "con"
-        assert signal.rule_id == "CON_13"
 
-    def test_con_13_pe_ratio_boundary(self):
-        """Test CON_13: PE ratio = 50x boundary (should not trigger)."""
-        mc = pd.DataFrame({
-            'year': [2024],
-            'pe_ratio': [50.0],
-        })
-        data = make_company_data(market_cap=mc)
-        signal = rule_con_13_pe_ratio_high(data)
-        assert signal is None  # PE = 50.0 is not > 50
+class TestUnsupportedRuleIDs:
+    """Tests confirming PRO_13 and CON_13 are NOT part of the specification."""
 
-    def test_con_13_pe_ratio_low(self):
-        """Test CON_13: PE ratio below 50x should not trigger."""
-        mc = pd.DataFrame({
-            'year': [2024],
-            'pe_ratio': [25.0],
-        })
-        data = make_company_data(market_cap=mc)
-        signal = rule_con_13_pe_ratio_high(data)
-        assert signal is None
+    def test_pro_13_not_in_supported_rules(self):
+        """PRO_13 should not be in PRO_RULES list."""
+        rule_names = [fn.__name__ for fn in PRO_RULES]
+        assert 'rule_pro_13_profit_margin_sustained' not in rule_names
+
+    def test_con_13_not_in_supported_rules(self):
+        """CON_13 should not be in CON_RULES list."""
+        rule_names = [fn.__name__ for fn in CON_RULES]
+        assert 'rule_con_13_pe_ratio_high' not in rule_names
+
+    def test_pro_rules_count_is_12(self):
+        """PRO_RULES must contain exactly 12 rules (PRO_1 through PRO_12)."""
+        assert len(PRO_RULES) == 12
+
+    def test_con_rules_count_is_12(self):
+        """CON_RULES must contain exactly 12 rules (CON_1 through CON_12)."""
+        assert len(CON_RULES) == 12
+
+    def test_no_pro_13_signals_generated(self):
+        """No signal should ever have rule_id PRO_13."""
+        from src.nlp.pros_cons_generator import generate_output
+        with patch('src.nlp.pros_cons_generator.get_company_list') as mock_list:
+            mock_list.return_value = [{'company_id': 'TEST', 'company_name': 'Test Co'}]
+            with patch('src.nlp.pros_cons_generator.load_company_data') as mock_load:
+                mock_load.return_value = make_company_data()
+                df = generate_output()
+                assert 'PRO_13' not in df['rule_id'].values
+
+    def test_no_con_13_signals_generated(self):
+        """No signal should ever have rule_id CON_13."""
+        from src.nlp.pros_cons_generator import generate_output
+        with patch('src.nlp.pros_cons_generator.get_company_list') as mock_list:
+            mock_list.return_value = [{'company_id': 'TEST', 'company_name': 'Test Co'}]
+            with patch('src.nlp.pros_cons_generator.load_company_data') as mock_load:
+                mock_load.return_value = make_company_data()
+                df = generate_output()
+                assert 'CON_13' not in df['rule_id'].values
 
 
 class TestThresholdBoundaryCases:

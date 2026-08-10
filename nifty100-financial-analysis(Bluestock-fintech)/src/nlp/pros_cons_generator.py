@@ -6,6 +6,9 @@ pros/cons signals with deterministic confidence scores.
 
 Uses existing analytics functions from src/analytics/ for calculations.
 Reads data from the SQLite database via src/dashboard/utils/db.py.
+
+Specification: Sprint 5, Day 30 — exactly 24 rules (PRO_1..PRO_12, CON_1..CON_12).
+PRO_13 and CON_13 were tested as extensions but are NOT part of the final Sprint 5 implementation.
 """
 
 import math
@@ -24,7 +27,6 @@ from src.dashboard.utils.db import (
     get_valuation,
     get_sectors,
 )
-from src.dashboard.utils.db import _fetch_df
 
 # Import analytics functions
 from src.analytics.cagr import calculate_cagr
@@ -67,13 +69,6 @@ def load_company_data(company_id: str) -> CompanyData:
     sector_row = sector_df[sector_df['company_id'] == company_id]
     sector = sector_row['broad_sector'].iloc[0] if not sector_row.empty else None
 
-    # Backfill ROE from companies table when financial_ratios has NULL values
-    # This fixes data quality issues for companies like SBIN where ROE is NULL
-    roe_from_companies = _get_company_roe(company_id)
-    if roe_from_companies is not None and not fr.empty:
-        if fr['return_on_equity_pct'].isna().all():
-            fr['return_on_equity_pct'] = roe_from_companies
-
     return CompanyData(
         company_id=company_id,
         financial_ratios=fr,
@@ -82,17 +77,6 @@ def load_company_data(company_id: str) -> CompanyData:
         market_cap=mc,
         sector=sector,
     )
-
-
-def _get_company_roe(company_id: str) -> Optional[float]:
-    """Get ROE from the companies table as a fallback when financial_ratios has NULL."""
-    comp = _fetch_df(
-        "SELECT roe_percentage FROM companies WHERE id = ?",
-        (company_id,)
-    )
-    if not comp.empty:
-        return _safe_float(comp['roe_percentage'].iloc[0])
-    return None
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -720,41 +704,6 @@ def rule_pro_12_assets_growing_declining_debt(data: CompanyData) -> Optional[Pro
     )
 
 
-def rule_pro_13_profit_margin_sustained(data: CompanyData) -> Optional[ProsConsSignal]:
-    """
-    PRO_13: Sustained positive net profit margin above 10% for 3+ years.
-
-    Works as a fallback for financial institutions (banks) where traditional
-    operating profit margin metrics are not meaningful. Uses net_profit_margin_pct
-    from financial_ratios.
-    """
-    npm_values = _get_year_values(data.financial_ratios, 'net_profit_margin_pct')
-    if not npm_values:
-        return None
-
-    consecutive = _consecutive_years_count(npm_values, lambda v: v > 10)
-    if consecutive < 3:
-        return None
-
-    years_present = _consecutive_years_present(npm_values, 3)
-    latest_npm = npm_values[0] if npm_values[0] is not None else 0.0
-
-    confidence = _compute_confidence(
-        latest_npm, 10.0, True, years_present, 3, consecutive, 3
-    )
-
-    if confidence <= 60:
-        return None
-
-    return ProsConsSignal(
-        company_id=data.company_id,
-        type="pro",
-        rule_id="PRO_13",
-        text="Sustained net profit margin above 10% demonstrates consistent profitability and sound business model",
-        confidence_pct=round(confidence, 2),
-    )
-
-
 # ============================================================
 # CON RULES
 # ============================================================
@@ -1240,36 +1189,6 @@ def rule_con_12_revenue_cagr_under_5pct(data: CompanyData) -> Optional[ProsConsS
     )
 
 
-def rule_con_13_pe_ratio_high(data: CompanyData) -> Optional[ProsConsSignal]:
-    """
-    CON_13: PE ratio > 50x indicating potential overvaluation.
-
-    Uses market_cap.pe_ratio for the latest available year.
-    """
-    latest_pe = _get_latest_year_value(data.market_cap, 'pe_ratio')
-    if latest_pe is None or latest_pe <= 50:
-        return None
-
-    years_present = _consecutive_years_present(
-        _get_year_values(data.market_cap, 'pe_ratio'), 1
-    )
-
-    confidence = _compute_confidence(
-        latest_pe, 50.0, True, years_present, 1, 1, 1
-    )
-
-    if confidence <= 60:
-        return None
-
-    return ProsConsSignal(
-        company_id=data.company_id,
-        type="con",
-        rule_id="CON_13",
-        text="High PE ratio above 50x may indicate overvaluation relative to earnings",
-        confidence_pct=round(confidence, 2),
-    )
-
-
 # ============================================================
 # MAIN GENERATOR
 # ============================================================
@@ -1287,7 +1206,6 @@ PRO_RULES = [
     rule_pro_10_roe_improving_3y,
     rule_pro_11_revenue_cagr_gt_pat_cagr,
     rule_pro_12_assets_growing_declining_debt,
-    rule_pro_13_profit_margin_sustained,
 ]
 
 CON_RULES = [
@@ -1303,7 +1221,6 @@ CON_RULES = [
     rule_con_10_roce_low,
     rule_con_11_net_debt_3x_ebitda,
     rule_con_12_revenue_cagr_under_5pct,
-    rule_con_13_pe_ratio_high,
 ]
 
 
