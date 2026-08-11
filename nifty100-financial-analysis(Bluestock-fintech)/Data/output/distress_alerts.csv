@@ -1,0 +1,14 @@
+company_id,cfo_quality_value,cfo_quality_label,capex_intensity_value,capex_intensity_label,fcf_cagr_5yr,fcf_conversion_pct,distress_flag,deleveraging_flag,capital_allocation,latest_year
+AXISBANK,4.9706,High Quality,8.23,Asset Light,-77.87,-58.55,True,False,Weak,2024.0
+BAJFINANCE,-3.7584,Accrual Risk,13.04,Asset Light,,-553.12,True,False,Weak,2024.0
+BAJAJFINSV,-2.9937,Accrual Risk,9.93,Asset Light,,-510.64,True,False,Weak,2024.0
+BANKBARODA,3.4739,High Quality,1.09,Asset Light,-62.66,-40.06,True,False,Weak,2024.0
+BHEL,-2.2108,Accrual Risk,5.57,Asset Light,19.44,-844.68,True,False,Poor,2024.0
+CHOLAFIN,-6.1953,Accrual Risk,14.9,Asset Light,,-1126.84,True,False,Weak,2024.0
+GRASIM,0.6128,Moderate,17.65,Asset Light,6.71,-340.85,True,False,Weak,2024.0
+M&M,3.3156,High Quality,4.04,Asset Light,,-91.65,True,False,Weak,2024.0
+PFC,-3.0348,Accrual Risk,3.73,Asset Light,,-382.56,True,False,Weak,2024.0
+PNB,-1.2185,Accrual Risk,1.38,Asset Light,-14.87,-321.56,True,False,Poor,2024.0
+RECLTD,-3.8562,Accrual Risk,3.85,Asset Light,,-421.03,True,False,Weak,2024.0
+SHRIRAMFIN,-2.6128,Accrual Risk,0.71,Asset Light,,-423.83,True,False,Weak,2024.0
+TVSMOTOR,-0.7509,Accrual Risk,2.56,Asset Light,,-126.7,True,False,,2024.0

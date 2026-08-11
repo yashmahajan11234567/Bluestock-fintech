@@ -1,0 +1,81 @@
+company_id,metric_type,period_years,parsed_value_pct,computed_value_pct,divergence_pct,divergence_flag
+HDFCBANK,compounded_sales_growth,10.0,21.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,compounded_profit_growth,10.0,22.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,stock_price_cagr,10.0,15.0,4.6596776050085165,10.340322394991484,"DIVERGENCE >5%: parsed=15.00%, computed=4.66%"
+HDFCBANK,roe,10.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+SBILIFE,compounded_sales_growth,5.0,24.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,compounded_profit_growth,5.0,6.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,stock_price_cagr,5.0,8.0,15.91275948395836,7.912759483958361,"DIVERGENCE >5%: parsed=8.00%, computed=15.91%"
+SBILIFE,roe,5.0,14.0,,,SKIPPED: ROE is not a CAGR metric
+SBILIFE,compounded_sales_growth,3.0,17.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,compounded_profit_growth,3.0,9.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,stock_price_cagr,3.0,7.0,15.91275948395836,8.91275948395836,"DIVERGENCE >5%: parsed=7.00%, computed=15.91%"
+SBILIFE,roe,3.0,13.0,,,SKIPPED: ROE is not a CAGR metric
+SBILIFE,compounded_sales_growth,0.0,43.0,,,SKIPPED: TTM period (not year-based)
+SBILIFE,compounded_profit_growth,0.0,18.0,,,SKIPPED: TTM period (not year-based)
+SBILIFE,stock_price_cagr,1.0,-2.0,15.91275948395836,17.91275948395836,"DIVERGENCE >5%: parsed=-2.00%, computed=15.91%"
+SBILIFE,roe,1.0,12.0,,,SKIPPED: ROE is not a CAGR metric
+TCS,compounded_sales_growth,10.0,11.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,compounded_profit_growth,10.0,9.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,stock_price_cagr,10.0,14.0,5.842914073362082,8.157085926637919,"DIVERGENCE >5%: parsed=14.00%, computed=5.84%"
+TCS,roe,10.0,40.0,,,SKIPPED: ROE is not a CAGR metric
+TCS,compounded_sales_growth,5.0,10.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,compounded_profit_growth,5.0,8.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,stock_price_cagr,5.0,16.0,5.842914073362082,10.157085926637919,"DIVERGENCE >5%: parsed=16.00%, computed=5.84%"
+TCS,roe,5.0,44.0,,,SKIPPED: ROE is not a CAGR metric
+TCS,compounded_sales_growth,3.0,14.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,compounded_profit_growth,3.0,12.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+TCS,stock_price_cagr,3.0,8.0,5.842914073362082,2.157085926637918,"OK: parsed=8.00%, computed=5.84%"
+TCS,roe,3.0,47.0,,,SKIPPED: ROE is not a CAGR metric
+TCS,compounded_sales_growth,0.0,5.0,,,SKIPPED: TTM period (not year-based)
+TCS,compounded_profit_growth,0.0,8.0,,,SKIPPED: TTM period (not year-based)
+TCS,stock_price_cagr,1.0,16.0,5.842914073362082,10.157085926637919,"DIVERGENCE >5%: parsed=16.00%, computed=5.84%"
+TCS,roe,1.0,52.0,,,SKIPPED: ROE is not a CAGR metric
+WIPRO,compounded_sales_growth,10.0,8.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,compounded_profit_growth,10.0,3.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,stock_price_cagr,10.0,12.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,roe,10.0,18.0,,,SKIPPED: ROE is not a CAGR metric
+WIPRO,compounded_sales_growth,5.0,9.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,compounded_profit_growth,5.0,4.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,stock_price_cagr,5.0,20.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,roe,5.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+WIPRO,compounded_sales_growth,3.0,13.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,compounded_profit_growth,3.0,0.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,stock_price_cagr,3.0,-1.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,roe,3.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+HDFCBANK,compounded_sales_growth,5.0,22.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,compounded_profit_growth,5.0,23.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,stock_price_cagr,5.0,8.0,4.6596776050085165,3.3403223949914835,"OK: parsed=8.00%, computed=4.66%"
+HDFCBANK,roe,5.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+WIPRO,compounded_sales_growth,0.0,-3.0,,,SKIPPED: TTM period (not year-based)
+WIPRO,compounded_profit_growth,0.0,1.0,,,SKIPPED: TTM period (not year-based)
+WIPRO,stock_price_cagr,1.0,39.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+WIPRO,roe,1.0,14.0,,,SKIPPED: ROE is not a CAGR metric
+HDFCBANK,compounded_sales_growth,3.0,30.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,compounded_profit_growth,3.0,26.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+HDFCBANK,stock_price_cagr,3.0,8.0,4.6596776050085165,3.3403223949914835,"OK: parsed=8.00%, computed=4.66%"
+HDFCBANK,roe,3.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+HDFCBANK,compounded_sales_growth,0.0,47.0,,,SKIPPED: TTM period (not year-based)
+HDFCBANK,compounded_profit_growth,0.0,27.0,,,SKIPPED: TTM period (not year-based)
+HDFCBANK,stock_price_cagr,1.0,13.0,4.6596776050085165,8.340322394991484,"DIVERGENCE >5%: parsed=13.00%, computed=4.66%"
+HDFCBANK,roe,1.0,17.0,,,SKIPPED: ROE is not a CAGR metric
+INFY,compounded_sales_growth,10.0,12.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,compounded_profit_growth,10.0,9.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,stock_price_cagr,10.0,15.0,19.038044416337407,4.0380444163374065,"OK: parsed=15.00%, computed=19.04%"
+INFY,roe,10.0,27.0,,,SKIPPED: ROE is not a CAGR metric
+INFY,compounded_sales_growth,5.0,13.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,compounded_profit_growth,5.0,11.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,stock_price_cagr,5.0,22.0,19.038044416337407,2.9619555836625935,"OK: parsed=22.00%, computed=19.04%"
+INFY,roe,5.0,29.0,,,SKIPPED: ROE is not a CAGR metric
+INFY,compounded_sales_growth,3.0,5.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,compounded_profit_growth,3.0,10.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+INFY,stock_price_cagr,3.0,4.0,19.038044416337407,15.038044416337407,"DIVERGENCE >5%: parsed=4.00%, computed=19.04%"
+INFY,roe,3.0,31.0,,,SKIPPED: ROE is not a CAGR metric
+INFY,compounded_sales_growth,0.0,3.0,,,SKIPPED: TTM period (not year-based)
+INFY,compounded_profit_growth,0.0,8.0,,,SKIPPED: TTM period (not year-based)
+INFY,stock_price_cagr,1.0,27.0,19.038044416337407,7.9619555836625935,"DIVERGENCE >5%: parsed=27.00%, computed=19.04%"
+INFY,roe,1.0,32.0,,,SKIPPED: ROE is not a CAGR metric
+SBILIFE,compounded_sales_growth,10.0,23.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,compounded_profit_growth,10.0,9.0,,,NO COMPARABLE DATA: Insufficient source data for cross-validation
+SBILIFE,stock_price_cagr,10.0,9.0,15.91275948395836,6.912759483958361,"DIVERGENCE >5%: parsed=9.00%, computed=15.91%"
+SBILIFE,roe,10.0,16.0,,,SKIPPED: ROE is not a CAGR metric
