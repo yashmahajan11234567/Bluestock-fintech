@@ -1,0 +1,137 @@
+INFO:     Started server process [37692]
+INFO:     Waiting for application startup.
+2026-08-15 17:28:23,088 - bluestock.api - INFO - Starting Bluestock Fintech API v0.1.0
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-08-15 17:29:09,744 - bluestock.api - INFO - GET /api/v1/health completed in 0.0031s
+INFO:     127.0.0.1:61629 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-15 17:29:55,988 - bluestock.api - INFO - GET /docs completed in 0.0004s
+INFO:     127.0.0.1:61638 - "GET /docs HTTP/1.1" 200 OK
+2026-08-15 17:31:20,428 - bluestock.api - INFO - GET /openapi.json completed in 0.0049s
+INFO:     127.0.0.1:61657 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-15 17:32:36,151 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0003s
+INFO:     127.0.0.1:49857 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 18:44:57,928 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0061s
+INFO:     127.0.0.1:55333 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 18:45:05,778 - bluestock.api - INFO - GET /api/v1/health completed in 0.0422s
+INFO:     127.0.0.1:55337 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-15 18:45:14,822 - bluestock.api - INFO - GET /docs completed in 0.0265s
+INFO:     127.0.0.1:55341 - "GET /docs HTTP/1.1" 200 OK
+2026-08-15 18:45:31,432 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0003s
+INFO:     127.0.0.1:55444 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 18:45:42,272 - bluestock.api - INFO - GET /openapi.json completed in 0.0141s
+INFO:     127.0.0.1:55448 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-15 18:48:02,419 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0047s
+INFO:     127.0.0.1:59631 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 18:59:13,730 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0009s
+INFO:     127.0.0.1:58473 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 18:59:31,562 - bluestock.api - INFO - GET /api/v1/companies/ABB completed in 0.0268s
+INFO:     127.0.0.1:58482 - "GET /api/v1/companies/ABB HTTP/1.1" 404 Not Found
+2026-08-15 19:05:00,594 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0021s
+INFO:     127.0.0.1:50203 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 19:08:57,114 - bluestock.api - INFO - GET /api/v1/companies/ABB/financials completed in 0.0026s
+INFO:     127.0.0.1:49682 - "GET /api/v1/companies/ABB/financials HTTP/1.1" 404 Not Found
+2026-08-15 19:14:00,789 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0012s
+INFO:     127.0.0.1:57170 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 19:14:08,767 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0005s
+INFO:     127.0.0.1:57174 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-15 19:14:19,673 - bluestock.api - INFO - GET /openapi.json completed in 0.0050s
+INFO:     127.0.0.1:57178 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-15 19:14:46,739 - bluestock.api - INFO - GET /openapi.json completed in 0.0013s
+INFO:     127.0.0.1:57187 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-15 19:14:59,617 - bluestock.api - INFO - GET /openapi.json completed in 0.0017s
+INFO:     127.0.0.1:57192 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-16 01:07:19,617 - bluestock.api - INFO - GET /api/v1/valuation/ABB completed in 0.0082s
+INFO:     127.0.0.1:62005 - "GET /api/v1/valuation/ABB HTTP/1.1" 404 Not Found
+2026-08-16 01:07:21,644 - bluestock.api - INFO - GET /api/v1/valuation/THIS_COMPANY_DOES_NOT_EXIST completed in 0.0004s
+INFO:     127.0.0.1:62007 - "GET /api/v1/valuation/THIS_COMPANY_DOES_NOT_EXIST HTTP/1.1" 404 Not Found
+2026-08-16 01:07:23,701 - bluestock.api - INFO - GET /openapi.json completed in 0.0114s
+INFO:     127.0.0.1:62009 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-16 01:09:58,042 - bluestock.api - INFO - GET /api/v1/valuation/ABB completed in 0.0032s
+INFO:     127.0.0.1:51710 - "GET /api/v1/valuation/ABB HTTP/1.1" 404 Not Found
+2026-08-16 01:10:00,074 - bluestock.api - INFO - GET /api/v1/valuation/THIS_COMPANY_DOES_NOT_EXIST completed in 0.0008s
+INFO:     127.0.0.1:51713 - "GET /api/v1/valuation/THIS_COMPANY_DOES_NOT_EXIST HTTP/1.1" 404 Not Found
+2026-08-16 01:10:02,120 - bluestock.api - INFO - GET /openapi.json completed in 0.0007s
+INFO:     127.0.0.1:51715 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-16 01:10:23,651 - bluestock.api - INFO - GET /api/v1/valuation/ABB completed in 0.0005s
+INFO:     127.0.0.1:51722 - "GET /api/v1/valuation/ABB HTTP/1.1" 404 Not Found
+2026-08-16 10:15:35,008 - bluestock.api - INFO - GET /api/v1/health completed in 0.0312s
+INFO:     127.0.0.1:61063 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 10:15:35,033 - bluestock.api - INFO - GET /docs completed in 0.0039s
+INFO:     127.0.0.1:61064 - "GET /docs HTTP/1.1" 200 OK
+2026-08-16 10:15:35,063 - bluestock.api - INFO - GET /api/v1/screener completed in 0.0045s
+INFO:     127.0.0.1:61065 - "GET /api/v1/screener?page_size=5 HTTP/1.1" 200 OK
+2026-08-16 10:15:37,843 - bluestock.api - INFO - GET /api/v1/companies/TCS completed in 0.0012s
+INFO:     127.0.0.1:61073 - "GET /api/v1/companies/TCS HTTP/1.1" 404 Not Found
+2026-08-16 10:15:55,741 - bluestock.api - INFO - GET /api/v1/companies/TCS completed in 0.0002s
+INFO:     127.0.0.1:61081 - "GET /api/v1/companies/TCS HTTP/1.1" 404 Not Found
+2026-08-16 10:16:03,893 - bluestock.api - INFO - GET /api/v1/companies/ completed in 0.0147s
+INFO:     127.0.0.1:61084 - "GET /api/v1/companies/ HTTP/1.1" 307 Temporary Redirect
+2026-08-16 10:16:23,917 - bluestock.api - INFO - GET /api/v1/companies/ABB completed in 0.0014s
+INFO:     127.0.0.1:61091 - "GET /api/v1/companies/ABB HTTP/1.1" 404 Not Found
+2026-08-16 10:16:24,399 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0005s
+INFO:     127.0.0.1:61092 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 10:16:30,783 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0003s
+INFO:     127.0.0.1:61096 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 10:16:40,665 - bluestock.api - INFO - GET /api/v1/health completed in 0.0075s
+INFO:     127.0.0.1:61099 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 10:16:40,819 - bluestock.api - INFO - GET / completed in 0.0001s
+INFO:     127.0.0.1:61100 - "GET / HTTP/1.1" 404 Not Found
+2026-08-16 10:17:24,193 - bluestock.api - INFO - GET /api/v1/screener completed in 0.0003s
+INFO:     127.0.0.1:51676 - "GET /api/v1/screener?page_size=5 HTTP/1.1" 200 OK
+2026-08-16 10:17:42,160 - bluestock.api - INFO - GET /api/v1/health completed in 0.0066s
+INFO:     127.0.0.1:51683 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 10:17:57,864 - bluestock.api - INFO - GET /api/v1/companies/ABB completed in 0.0010s
+INFO:     127.0.0.1:51687 - "GET /api/v1/companies/ABB HTTP/1.1" 404 Not Found
+2026-08-16 10:18:37,270 - bluestock.api - INFO - GET /api/v1/companies/ABB completed in 0.0002s
+INFO:     127.0.0.1:61811 - "GET /api/v1/companies/ABB?debug=true HTTP/1.1" 404 Not Found
+2026-08-16 10:18:37,425 - bluestock.api - INFO - GET /docs completed in 0.0077s
+INFO:     127.0.0.1:61812 - "GET /docs HTTP/1.1" 200 OK
+2026-08-16 10:18:44,999 - bluestock.api - INFO - GET /openapi.json completed in 0.0005s
+INFO:     127.0.0.1:61816 - "GET /openapi.json HTTP/1.1" 200 OK
+2026-08-16 21:23:38,020 - bluestock.api - INFO - GET /api/v1/health completed in 0.1419s
+INFO:     127.0.0.1:54938 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 21:24:01,174 - bluestock.api - INFO - GET /api/v1/health completed in 0.0044s
+INFO:     127.0.0.1:54947 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 21:24:02,820 - bluestock.api - INFO - GET /api/v1/companies/TCS/ratios completed in 0.0030s
+INFO:     127.0.0.1:54951 - "GET /api/v1/companies/TCS/ratios HTTP/1.1" 404 Not Found
+2026-08-16 21:24:04,187 - bluestock.api - INFO - GET /api/v1/screener completed in 0.0004s
+INFO:     127.0.0.1:54954 - "GET /api/v1/screener HTTP/1.1" 200 OK
+2026-08-16 21:24:17,442 - bluestock.api - INFO - GET /api/v1/companies/TCS/ratios completed in 0.0004s
+INFO:     127.0.0.1:54960 - "GET /api/v1/companies/TCS/ratios HTTP/1.1" 404 Not Found
+2026-08-16 21:24:17,447 - bluestock.api - INFO - GET /api/v1/companies/tcs/ratios completed in 0.0004s
+INFO:     127.0.0.1:54961 - "GET /api/v1/companies/tcs/ratios HTTP/1.1" 404 Not Found
+2026-08-16 21:24:17,471 - bluestock.api - INFO - GET /api/v1/ratios/TCS completed in 0.0004s
+INFO:     127.0.0.1:54962 - "GET /api/v1/ratios/TCS HTTP/1.1" 404 Not Found
+2026-08-16 21:24:17,486 - bluestock.api - INFO - GET /api/v1/companies/TCS/financials completed in 0.0004s
+INFO:     127.0.0.1:54963 - "GET /api/v1/companies/TCS/financials HTTP/1.1" 404 Not Found
+2026-08-16 21:24:17,509 - bluestock.api - INFO - GET /api/v1/health completed in 0.0068s
+INFO:     127.0.0.1:54964 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 21:24:17,513 - bluestock.api - INFO - GET /api/v1/companies/TCS completed in 0.0004s
+INFO:     127.0.0.1:54965 - "GET /api/v1/companies/TCS HTTP/1.1" 404 Not Found
+2026-08-16 21:24:17,517 - bluestock.api - INFO - GET /api/v1/companies/TCS/profile completed in 0.0008s
+INFO:     127.0.0.1:54966 - "GET /api/v1/companies/TCS/profile HTTP/1.1" 404 Not Found
+2026-08-16 21:24:31,272 - bluestock.api - INFO - GET / completed in 0.0004s
+INFO:     127.0.0.1:54974 - "GET / HTTP/1.1" 404 Not Found
+2026-08-16 21:24:31,279 - bluestock.api - INFO - GET /docs completed in 0.0011s
+INFO:     127.0.0.1:54975 - "GET /docs HTTP/1.1" 200 OK
+2026-08-16 21:24:31,282 - bluestock.api - INFO - GET /api/v1 completed in 0.0004s
+INFO:     127.0.0.1:54976 - "GET /api/v1 HTTP/1.1" 404 Not Found
+2026-08-16 21:24:31,288 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0011s
+INFO:     127.0.0.1:54977 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 21:24:51,281 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0004s
+INFO:     127.0.0.1:54984 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 21:24:53,106 - bluestock.api - INFO - GET /api/v1/companies/TCS/ratios completed in 0.0003s
+INFO:     127.0.0.1:54987 - "GET /api/v1/companies/TCS/ratios HTTP/1.1" 404 Not Found
+2026-08-16 21:24:53,110 - bluestock.api - INFO - GET /api/v1/companies/TCS/financial-data completed in 0.0003s
+INFO:     127.0.0.1:54988 - "GET /api/v1/companies/TCS/financial-data HTTP/1.1" 404 Not Found
+2026-08-16 21:24:53,113 - bluestock.api - INFO - GET /api/v1/companies/TCS completed in 0.0003s
+INFO:     127.0.0.1:54989 - "GET /api/v1/companies/TCS HTTP/1.1" 404 Not Found
+2026-08-16 21:24:53,117 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0004s
+INFO:     127.0.0.1:54991 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 21:25:05,273 - bluestock.api - INFO - GET /api/v1/companies completed in 0.0003s
+INFO:     127.0.0.1:54996 - "GET /api/v1/companies HTTP/1.1" 200 OK
+2026-08-16 21:53:46,911 - bluestock.api - INFO - GET /api/v1/health completed in 0.0215s
+INFO:     127.0.0.1:58789 - "GET /api/v1/health HTTP/1.1" 200 OK
+2026-08-16 21:53:46,936 - bluestock.api - INFO - GET /openapi.json completed in 0.0190s
+INFO:     127.0.0.1:58790 - "GET /openapi.json HTTP/1.1" 200 OK

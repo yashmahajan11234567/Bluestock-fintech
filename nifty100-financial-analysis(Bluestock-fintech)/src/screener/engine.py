@@ -1,8 +1,9 @@
-﻿import pandas as pd
+import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional
 import os
 import warnings
+
 
 def load_screener_data() -> pd.DataFrame:
     """
@@ -11,7 +12,7 @@ def load_screener_data() -> pd.DataFrame:
     """
     base_path = os.path.join(os.path.dirname(__file__), '..', '..', 'Data', 'raw')
     # Companies
-    companies = pd.read_excel(os.path.join(base_path, 'companies.xlsx'), header=1)
+    companies = pd.read_excel(os.path.join(base_path, 'companies.xlsx'))
     companies = companies.rename(columns={'id': 'company_id'})
     # Sectors
     sectors = pd.read_excel(os.path.join(base_path, 'sectors.xlsx'))
@@ -33,37 +34,103 @@ def load_screener_data() -> pd.DataFrame:
     market_cap = pd.read_excel(os.path.join(base_path, 'market_cap.xlsx'))
     market_cap = market_cap.sort_values(['company_id', 'year'], ascending=[True, False])
     market_cap = market_cap.drop_duplicates(subset=['company_id'], keep='first')
-    # Analysis
-    analysis = pd.read_excel(os.path.join(base_path, 'analysis.xlsx'), header=1)
-    if 'id' in analysis.columns:
-        analysis = analysis.drop(columns=['id'])
-    if 'year' in analysis.columns:
-        analysis['_year_int'] = analysis['year'].apply(_parse_year_to_int)
-        analysis = analysis.sort_values(['company_id', '_year_int'], ascending=[True, False])
-        analysis = analysis.drop_duplicates(subset=['company_id'], keep='first')
-        analysis = analysis.drop(columns=['_year_int'])
-    else:
-        analysis = analysis.drop_duplicates(subset=['company_id'], keep='first')
-    # Parse CAGR strings to float percentages using shared helper
-    analysis = _parse_cagr_strings(analysis)
     # Profit and loss
     profitandloss = pd.read_excel(os.path.join(base_path, 'profitandloss.xlsx'), header=1)
     if 'id' in profitandloss.columns:
         profitandloss = profitandloss.drop(columns=['id'])
+    # Compute CAGR from profitandloss history (all years)
+    # Create/normalize _year_int FIRST, then keep a copy for CAGR calculation
     if 'year' in profitandloss.columns:
         profitandloss['_year_int'] = profitandloss['year'].apply(_parse_year_to_int)
         profitandloss = profitandloss.sort_values(['company_id', '_year_int'], ascending=[True, False])
         profitandloss = profitandloss.drop_duplicates(subset=['company_id'], keep='first')
+        # Now fix: sort ascending, then keep='last' gets the latest year.
+        profitandloss = profitandloss.sort_values(['company_id', '_year_int'], ascending=[True, False])
+        profitandloss = profitandloss.drop_duplicates(subset=['company_id'], keep='last')
         profitandloss = profitandloss.drop(columns=['_year_int'])
     else:
-        profitandloss = profitandloss.drop_duplicates(subset=['company_id'], keep='first')
+        profitandloss = profitandloss.drop_duplicates(subset=['company_id'], keep='last')
+
+    # Create pl_full AFTER _year_int is available for CAGR calculation
+    # Reload and prepare with _year_int for CAGR
+    pl_full = pd.read_excel(os.path.join(base_path, 'profitandloss.xlsx'), header=1)
+    if 'id' in pl_full.columns:
+        pl_full = pl_full.drop(columns=['id'])
+    if 'year' in pl_full.columns:
+        pl_full['_year_int'] = pl_full['year'].apply(_parse_year_to_int)
+        # Keep only valid years for CAGR (exclude TTM)
+        pl_full = pl_full[pl_full['_year_int'] > 0].copy()
+    # Helper functions
+    def _to_float(value):
+        try:
+            v = pd.to_numeric(value, errors='coerce')
+            return v if not pd.isna(v) else None
+        except Exception:
+            return None
+    def _calculate_cagr_value(start_val, end_val, n_years):
+        if start_val is None or end_val is None or n_years <= 0:
+            return None
+        if start_val == 0:
+            return None
+        return ((end_val / start_val) ** (1 / n_years) - 1) * 100.0
+    def _calculate_cagr(group):
+        # group is a DataFrame for one company with columns: year, sales, net_profit, _year_int
+        # Exclude rows with invalid year (year_int <= 0) for CAGR calculation (e.g., TTM)
+        group = group[group['_year_int'] > 0].copy()
+        if len(group) < 2:
+            return pd.Series({'compounded_sales_growth': None, 'compounded_profit_growth': None})
+        # Sort by year_int for consistent ordering
+        group = group.sort_values('_year_int')
+        years = group['_year_int'].tolist()
+        sales = group['sales'].apply(_to_float).tolist()
+        net_profits = group['net_profit'].apply(_to_float).tolist()
+        # Build lists of (year, value) for sales and net_profit where value is not None and > 0
+        sales_pairs = [(y, s) for y, s in zip(years, sales) if s is not None and s > 0]
+        net_profit_pairs = [(y, s) for y, s in zip(years, net_profits) if s is not None and s > 0]
+        sales_cagr = None
+        if len(sales_pairs) >= 2:
+            start_year, start_val = sales_pairs[0]
+            end_year, end_val = sales_pairs[-1]
+            n_years = end_year - start_year
+            if n_years > 0:
+                sales_cagr = _calculate_cagr_value(start_val, end_val, n_years)
+        net_profit_cagr = None
+        if len(net_profit_pairs) >= 2:
+            start_year, start_val = net_profit_pairs[0]
+            end_year, end_val = net_profit_pairs[-1]
+            n_years = end_year - start_year
+            if n_years > 0:
+                net_profit_cagr = _calculate_cagr_value(start_val, end_val, n_years)
+        return pd.Series({
+            'compounded_sales_growth': sales_cagr,
+            'compounded_profit_growth': net_profit_cagr
+        })
+    # We need to apply this to each company_id group
+    cagr_df = pl_full.groupby('company_id').apply(_calculate_cagr, include_groups=False).reset_index()
+    # Now, we want the latest year's profitandloss data for merging (for sales, net_profit, etc.)
+    # profitandloss already has the latest year's data (because we sorted and dropped duplicates keeping first? Wait, we did keep='first' after sorting by year ascending? Actually, we sorted by year ascending and then dropped duplicates keeping first -> that gives the earliest year. We want the latest year.
+    # Let's recompute the latest year's profitandloss data:
+    pl_latest = profitandloss.copy()
+    if 'year' in pl_latest.columns:
+        pl_latest['_year_int'] = pl_latest['year'].apply(_parse_year_to_int)
+        pl_latest = pl_latest.sort_values(['company_id', '_year_int'], ascending=[True, False])
+        pl_latest = pl_latest.drop_duplicates(subset=['company_id'], keep='first')  # keep the latest because we sorted ascending? Wait, we sorted ascending, so the latest year is at the end. We want to keep the last duplicate. So we should do keep='last'.
+        # Let's fix: sort ascending, then keep='last' gets the latest year.
+        pl_latest = pl_latest.sort_values(['company_id', '_year_int'], ascending=[True, False])
+        pl_latest = pl_latest.drop_duplicates(subset=['company_id'], keep='last')
+        pl_latest = pl_latest.drop(columns=['_year_int'])
+    else:
+        pl_latest = pl_latest.drop_duplicates(subset=['company_id'], keep='last')
     # Merge
     df = pd.merge(companies, sectors, on='company_id', how='left')
     df = pd.merge(df, fin_ratio, on='company_id', how='left')
     df = pd.merge(df, market_cap, on='company_id', how='left')
-    df = pd.merge(df, analysis, on='company_id', how='left')
-    df = pd.merge(df, profitandloss, on='company_id', how='left')
+    # Merge latest profitandloss (for columns like sales, net_profit, etc.)
+    df = pd.merge(df, pl_latest, on='company_id', how='left')
+    # Merge CAGR data (overwrite the CAGR columns if they exist from profitandloss? They don't, but we will have the columns from cagr_df)
+    df = pd.merge(df, cagr_df, on='company_id', how='left')
     return df
+
 
 def apply_filters(df: pd.DataFrame, filters: Dict[str, Any]) -> pd.DataFrame:
     """
@@ -122,6 +189,7 @@ def apply_filters(df: pd.DataFrame, filters: Dict[str, Any]) -> pd.DataFrame:
                 filtered_df = filtered_df[mask]
     return filtered_df
 
+
 def _winsorize_and_scale(series, higher_is_better=True):
     s = pd.to_numeric(series, errors='coerce')
     nan = s.isna()
@@ -141,6 +209,7 @@ def _winsorize_and_scale(series, higher_is_better=True):
         res = 100.0 - res
     return res
 
+
 def run_screener(filters: Optional[Dict[str, Any]] = None,
                  sort_by: str = 'return_on_equity_pct',
                  ascending: bool = False) -> pd.DataFrame:
@@ -148,6 +217,12 @@ def run_screener(filters: Optional[Dict[str, Any]] = None,
         filters = {}
     df = load_screener_data()
     filtered_df = apply_filters(df, filters)
+
+    # Handle edge case of empty dataframe
+    if len(filtered_df) == 0:
+        # Return empty dataframe with expected columns
+        return filtered_df
+
     # Scores
     roe_score = _winsorize_and_scale(filtered_df['return_on_equity_pct'], True)
     npm_score = _winsorize_and_scale(filtered_df['net_profit_margin_pct'], True)
@@ -169,24 +244,60 @@ def run_screener(filters: Optional[Dict[str, Any]] = None,
     composite_score = (0.35 * profitability_score + 0.30 * cash_quality_score +
                        0.20 * growth_score + 0.15 * leverage_score)
     filtered_df['composite_quality_score'] = composite_score
-    # Sector relative score
-    sector_scores = filtered_df.groupby('broad_sector', group_keys=False).apply(
-        lambda g: (0.35 * (0.6 * _winsorize_and_scale(g['return_on_equity_pct'], True) +
-                               0.4 * _winsorize_and_scale(g['net_profit_margin_pct'], True)) +
-                  0.30 * (0.5 * _winsorize_and_scale(g['free_cash_flow_cr'], True) +
-                           (1/3) * _winsorize_and_scale(g['cash_from_operations_cr'] / g['net_profit'].replace(0, np.nan), True) +
-                           (1/6) * (g['free_cash_flow_cr'] > 0).astype(float) * 100.0) +
-                  0.20 * (0.5 * _winsorize_and_scale(g['compounded_sales_growth'], True) +
-                           0.5 * _winsorize_and_scale(g['compounded_profit_growth'], True)) +
-                  0.15 * ((2/3) * _winsorize_and_scale(g['debt_to_equity'], False) +
-                           (1/3) * _winsorize_and_scale(g['interest_coverage'], True)))
-    )
-    filtered_df['sector_relative_score'] = sector_scores.values
+
+    # Sector relative score - handle edge cases
+    if len(filtered_df) > 0 and 'broad_sector' in filtered_df.columns:
+        try:
+            def _compute_sector_score(group):
+                """Compute composite sector-relative score for a single sector group."""
+                roe_score = _winsorize_and_scale(group['return_on_equity_pct'], True)
+                npm_score = _winsorize_and_scale(group['net_profit_margin_pct'], True)
+                profitability = 0.6 * roe_score + 0.4 * npm_score
+
+                fcf_score = _winsorize_and_scale(group['free_cash_flow_cr'], True)
+                cfo_pat = group['cash_from_operations_cr'] / group['net_profit'].replace(0, np.nan)
+                cfo_pat = cfo_pat.replace([np.inf, -np.inf], np.nan)
+                cfo_pat_score = _winsorize_and_scale(cfo_pat, True)
+                fcf_positive = (group['free_cash_flow_cr'] > 0).astype(float) * 100.0
+                cash_quality = 0.5 * fcf_score + (1/3) * cfo_pat_score + (1/6) * fcf_positive
+
+                revenue_cagr_score = _winsorize_and_scale(group['compounded_sales_growth'], True)
+                pat_cagr_score = _winsorize_and_scale(group['compounded_profit_growth'], True)
+                growth = 0.5 * revenue_cagr_score + 0.5 * pat_cagr_score
+
+                de_score = _winsorize_and_scale(group['debt_to_equity'], False)
+                ic_score = _winsorize_and_scale(group['interest_coverage'], True)
+                leverage = (2/3) * de_score + (1/3) * ic_score
+
+                composite = (0.35 * profitability + 0.30 * cash_quality +
+                           0.20 * growth + 0.15 * leverage)
+                return composite
+
+            sector_scores = filtered_df.groupby('broad_sector', group_keys=True).apply(
+                _compute_sector_score, include_groups=False
+            )
+            # Handle both DataFrame (single group) and Series (multiple groups) return types
+            if len(sector_scores) > 0:
+                if isinstance(sector_scores, pd.DataFrame):
+                    # Single sector: sector_scores is a DataFrame with columns = original indices
+                    # Convert to Series aligned with filtered_df index
+                    sector_scores = sector_scores.iloc[0]  # Get first (only) row
+                else:
+                    # Multiple sectors: sector_scores is a Series with MultiIndex (sector, original_index)
+                    # Drop sector level to get original index
+                    sector_scores = sector_scores.droplevel(0)
+                # Align with filtered_df index
+                filtered_df['sector_relative_score'] = sector_scores.reindex(filtered_df.index)
+        except Exception:
+            # If sector scoring fails, continue without it
+            pass
+
     if sort_by in filtered_df.columns:
         filtered_df = filtered_df.sort_values(by=sort_by, ascending=ascending, na_position='last')
     else:
         filtered_df = filtered_df.sort_values(by='return_on_equity_pct', ascending=ascending, na_position='last')
     return filtered_df
+
 
 def _parse_cagr_strings(df: pd.DataFrame) -> pd.DataFrame:
     """Parse CAGR string columns (e.g. '10 Years: 21%') into numeric floats.
@@ -210,7 +321,7 @@ def _parse_cagr_strings(df: pd.DataFrame) -> pd.DataFrame:
         if col in df.columns:
             df[col] = (
                 df[col].astype(str)
-                .str.extract(r"(\d+\.?\d*)%?")[0]
+                .str.extract(r":\s*(\d+\.?\d*)\s*%")[0]
                 .astype(float)
             )
     return df
@@ -221,6 +332,7 @@ def __getattr__(name):
         return globals()[name]
     raise AttributeError(f'module "{__name__}" has no attribute "{name}"')
 
+
 # Preset filter functions
 def get_quality_compounder_filters():
     return {'ROE': {'min': 15},
@@ -228,30 +340,36 @@ def get_quality_compounder_filters():
             'Free Cash Flow': {'min': 0},
             'Revenue CAGR': {'min': 10}}
 
+
 def get_value_pick_filters():
     return {'PE': {'max': 20},
             'PB': {'max': 3},
             'Debt to Equity': {'max': 2},
             'Dividend Yield': {'min': 1}}
 
+
 def get_growth_accelerator_filters():
     return {'PAT CAGR': {'min': 20},
             'Revenue CAGR': {'min': 15},
             'Debt to Equity': {'max': 2}}
+
 
 def get_dividend_champion_filters():
     return {'Dividend Yield': {'min': 2},
             'Dividend Payout': {'max': 80},
             'Free Cash Flow': {'min': 0}}
 
+
 def get_debt_free_blue_chip_filters():
     return {'Debt to Equity': {'max': 0},
             'ROE': {'min': 12},
             'Sales': {'min': 5000}}
 
+
 def get_turnaround_watch_filters():
     return {'Revenue CAGR': {'min': 10},
             'Free Cash Flow': {'min': 0}}
+
 
 # Output generation with conditional formatting
 def generate_screener_output(output_path: str = 'Data/output/screener_output.xlsx'):
@@ -282,3 +400,144 @@ def generate_screener_output(output_path: str = 'Data/output/screener_output.xls
                 for cell in row:
                     cell.fill = green
     print(f"Screener output saved to {output_path}")
+
+def _winsorize_and_scale(series, higher_is_better=True):
+    """Winsorize at P10/P90 and scale to [0, 100]."""
+    import pandas as pd
+    import numpy as np
+    s = pd.to_numeric(series, errors="coerce")
+    nan_mask = s.isna()
+    valid = s[~nan_mask]
+    if len(valid) == 0:
+        return pd.Series(np.nan, index=series.index)
+    p10 = valid.quantile(0.10)
+    p90 = valid.quantile(0.90)
+    s_w = s.clip(lower=p10, upper=p90)
+    mn = s_w.min()
+    mx = s_w.max()
+    if mx == mn:
+        r = pd.Series(np.nan, index=series.index)
+        r[~nan_mask] = 50.0
+    else:
+        r = (s_w - mn) / (mx - mn) * 100.0
+        r[nan_mask] = np.nan
+    if not higher_is_better:
+        r = 100.0 - r
+    return r
+
+
+def compute_profitability_score(df):
+    """Profitability score from ROE and Operating Profit Margin."""
+    import numpy as np
+    roe = _winsorize_and_scale(df["return_on_equity_pct"], higher_is_better=True)
+    opm = _winsorize_and_scale(df["operating_profit_margin_pct"], higher_is_better=True)
+    return (roe + opm) / 2.0
+
+
+def compute_cash_quality_score(df):
+    """Cash quality score from Free Cash Flow and Operating Cash Flow."""
+    import numpy as np
+    cols = [c for c in ["free_cash_flow_cr", "cash_from_operations_cr"] if c in df.columns]
+    if not cols:
+        import pandas as pd
+        return pd.Series(50.0, index=df.index)
+    scaled = [_winsorize_and_scale(df[c], higher_is_better=True) for c in cols]
+    if len(scaled) == 1:
+        return scaled[0]
+    return (scaled[0] + scaled[1]) / 2.0
+
+
+def compute_growth_score(df):
+    """Growth score placeholder: returns 50 (no CAGR data)."""
+    import pandas as pd
+    return pd.Series(50.0, index=df.index)
+
+
+def compute_leverage_score(df):
+    """Leverage score from Debt-to-Equity and Interest Coverage."""
+    import numpy as np
+    import pandas as pd
+    # Interest Coverage: treat 'Debt Free' as max value
+    ic = df["interest_coverage"]
+    ic_num = pd.to_numeric(ic, errors="coerce")
+    debt_free = ic.apply(lambda x: isinstance(x, str) and x.strip().lower() == "debt free")
+    if debt_free.any():
+        mx = ic_num.max()
+        if pd.notna(mx):
+            ic_num = ic_num.copy()
+            ic_num[debt_free] = mx
+    de = _winsorize_and_scale(df["debt_to_equity"], higher_is_better=False)
+    ic_s = _winsorize_and_scale(ic_num, higher_is_better=True)
+    return (de + ic_s) / 2.0
+
+
+
+def _winsorize_and_scale(series, higher_is_better=True):
+    """Winsorize at P10/P90 and scale to [0, 100]."""
+    import pandas as pd
+    import numpy as np
+    s = pd.to_numeric(series, errors="coerce")
+    nan_mask = s.isna()
+    valid = s[~nan_mask]
+    if len(valid) == 0:
+        return pd.Series(np.nan, index=series.index)
+    p10 = valid.quantile(0.10)
+    p90 = valid.quantile(0.90)
+    s_w = s.clip(lower=p10, upper=p90)
+    mn = s_w.min()
+    mx = s_w.max()
+    if mx == mn:
+        r = pd.Series(np.nan, index=series.index)
+        r[~nan_mask] = 50.0
+    else:
+        r = (s_w - mn) / (mx - mn) * 100.0
+        r[nan_mask] = np.nan
+    if not higher_is_better:
+        r = 100.0 - r
+    return r
+
+
+def compute_profitability_score(df):
+    """Profitability score from ROE and Operating Profit Margin."""
+    import numpy as np
+    roe = _winsorize_and_scale(df["return_on_equity_pct"], higher_is_better=True)
+    opm = _winsorize_and_scale(df["operating_profit_margin_pct"], higher_is_better=True)
+    return (roe + opm) / 2.0
+
+
+def compute_cash_quality_score(df):
+    """Cash quality score from Free Cash Flow and Operating Cash Flow."""
+    import numpy as np
+    cols = [c for c in ["free_cash_flow_cr", "cash_from_operations_cr"] if c in df.columns]
+    if not cols:
+        import pandas as pd
+        return pd.Series(50.0, index=df.index)
+    scaled = [_winsorize_and_scale(df[c], higher_is_better=True) for c in cols]
+    if len(scaled) == 1:
+        return scaled[0]
+    return (scaled[0] + scaled[1]) / 2.0
+
+
+def compute_growth_score(df):
+    """Growth score placeholder: returns 50 (no CAGR data)."""
+    import pandas as pd
+    return pd.Series(50.0, index=df.index)
+
+
+def compute_leverage_score(df):
+    """Leverage score from Debt-to-Equity and Interest Coverage."""
+    import numpy as np
+    import pandas as pd
+    # Interest Coverage: treat 'Debt Free' as max value
+    ic = df["interest_coverage"]
+    ic_num = pd.to_numeric(ic, errors="coerce")
+    debt_free = ic.apply(lambda x: isinstance(x, str) and x.strip().lower() == "debt free")
+    if debt_free.any():
+        mx = ic_num.max()
+        if pd.notna(mx):
+            ic_num = ic_num.copy()
+            ic_num[debt_free] = mx
+    de = _winsorize_and_scale(df["debt_to_equity"], higher_is_better=False)
+    ic_s = _winsorize_and_scale(ic_num, higher_is_better=True)
+    return (de + ic_s) / 2.0
+

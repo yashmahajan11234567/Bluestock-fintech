@@ -1,13 +1,13 @@
 table_name,rows_loaded,rows_rejected,execution_time,status
-companies,92,0,0.039,SUCCESS
-sectors,92,0,0.026,SUCCESS
-peer_groups,56,0,0.032,SUCCESS
-documents,1457,128,0.073,PARTIAL_REJECT
-prosandcons,14,2,0.039,PARTIAL_REJECT
-analysis,16,4,0.053,PARTIAL_REJECT
-financial_ratios,1160,24,0.094,PARTIAL_REJECT
-market_cap,552,0,0.154,SUCCESS
-profitandloss,1177,99,0.046,PARTIAL_REJECT
-balancesheet,1227,85,0.03,PARTIAL_REJECT
-cashflow,1091,96,0.039,PARTIAL_REJECT
-stock_prices,5520,0,0.139,SUCCESS
+companies,0,92,0.019,INSERT_ERROR: UNIQUE constraint failed: companies.id
+sectors,0,92,0.004,INSERT_ERROR: UNIQUE constraint failed: sectors.id
+peer_groups,56,0,0.013,SUCCESS
+documents,0,1585,0.015,INSERT_ERROR: UNIQUE constraint failed: documents.id
+prosandcons,0,16,0.006,INSERT_ERROR: UNIQUE constraint failed: prosandcons.id
+analysis,0,20,0.003,INSERT_ERROR: UNIQUE constraint failed: analysis.id
+financial_ratios,1184,0,0.044,SUCCESS
+market_cap,552,0,0.026,SUCCESS
+profitandloss,0,1276,0.007,INSERT_ERROR: UNIQUE constraint failed: profitandloss.id
+balancesheet,0,1312,0.005,INSERT_ERROR: UNIQUE constraint failed: balancesheet.id
+cashflow,0,1187,0.005,INSERT_ERROR: UNIQUE constraint failed: cashflow.id
+stock_prices,0,5520,0.024,INSERT_ERROR: UNIQUE constraint failed: stock_prices.id

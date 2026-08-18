@@ -1,17 +1,17 @@
-# Python virtual environment
+@"
+# Python virtual environments
 .venv/
 venv/
 env/
+ENV/
 
 # Python cache
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Pytest
+# Pytest / coverage
 .pytest_cache/
-
-# Coverage
 .coverage
 coverage.xml
 htmlcov/
@@ -19,8 +19,9 @@ htmlcov/
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment variables
+# Environment files
 .env
+.env.*
 
 # IDE
 .vscode/
@@ -29,3 +30,4 @@ htmlcov/
 # OS files
 .DS_Store
 Thumbs.db
+"@ | Set-Content ..\.gitignore

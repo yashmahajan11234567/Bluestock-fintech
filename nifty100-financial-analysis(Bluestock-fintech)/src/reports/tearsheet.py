@@ -11,6 +11,7 @@ functions.  No values are ever fabricated.
 """
 
 import os
+import tempfile
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -24,6 +25,7 @@ from reportlab.graphics.shapes import Drawing, Rect, String
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.charts.linecharts import VerticalLineChart
 from reportlab.graphics.widgets.markers import makeMarker
+from reportlab.graphics import renderPM
 from reportlab.platypus import (
     KeepTogether,
     PageBreak,
@@ -32,6 +34,7 @@ from reportlab.platypus import (
     Spacer,
     Table,
     TableStyle,
+    Image,
 )
 
 # ── DB helpers ──────────────────────────────────────────────────────────
@@ -346,9 +349,9 @@ def _get_roe_roce_data(
 
 def _get_balancesheet_data(
     company_id: str, n_years: int = 5
-) -> Tuple[List[int], List[Optional[float]], List[Optional[float]], List[Optional[float]]]:
+) -> Tuple[List[int], List[Optional[float]], List[Optional[float]], List[Optional[float]], List[Optional[float]]]:
     """
-    Return up to *n_years* of (years, equity, borrowings, other_liabilities).
+    Return up to *n_years* of (years, equity_capital, reserves, borrowings, other_liabilities).
 
     Uses the existing BS schema columns directly:
       - equity = equity_capital + reserves
@@ -390,30 +393,25 @@ def _get_balancesheet_data(
                     bs_df["year"] = list(reversed(years_inferred))
 
     if bs_df.empty:
-        return [], [], [], []
+        return [], [], [], [], []
 
     bs_sorted = bs_df.sort_values("year", ascending=True)
     years = [_safe_year(v) for v in bs_sorted["year"].tolist()][-n_years:]
 
-    equity_vals = []
+    equity_capital_vals = []
+    reserves_vals = []
     borrowings_vals = []
     other_liab_vals = []
 
     for _, row in bs_sorted.tail(n_years).iterrows():
         ec = _to_float(row.get("equity_capital"))
         res = _to_float(row.get("reserves"))
-        eq = None
-        if ec is not None and res is not None:
-            eq = ec + res
-        elif ec is not None:
-            eq = ec
-        elif res is not None:
-            eq = res
-        equity_vals.append(eq)
+        equity_capital_vals.append(ec)
+        reserves_vals.append(res)
         borrowings_vals.append(_to_float(row.get("borrowings")))
         other_liab_vals.append(_to_float(row.get("other_liabilities")))
 
-    return years, equity_vals, borrowings_vals, other_liab_vals
+    return years, equity_capital_vals, reserves_vals, borrowings_vals, other_liab_vals
 
 
 def _get_cashflow_waterfall(
@@ -542,6 +540,52 @@ def _get_capital_allocation(company_id: str) -> str:
         return "N/A"
 
 
+def _get_capital_allocation_history(company_id: str) -> List[Tuple[str, str]]:
+    """
+    Get capital allocation history for a company from Data/output/capital_allocation.csv.
+
+    Returns list of (year, category) tuples ordered by year ascending.
+    """
+    csv_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+        "Data", "output", "capital_allocation.csv",
+    )
+
+    if not os.path.exists(csv_path):
+        return []
+
+    try:
+        df = pd.read_csv(csv_path)
+        if df.empty:
+            return []
+
+        # Filter for the specific company
+        co_data = df[df["company_id"] == company_id]
+        if co_data.empty:
+            return []
+
+        # Select year and capital_allocation columns, drop rows with missing values
+        history_df = co_data[["year", "capital_allocation"]].dropna()
+        if history_df.empty:
+            return []
+
+        # Convert year to string and ensure capital_allocation is string
+        history_df["year"] = history_df["year"].astype(str)
+        history_df["capital_allocation"] = history_df["capital_allocation"].astype(str)
+
+        # Filter to only valid categories
+        valid_categories = {"Excellent", "Good", "Average", "Weak", "Poor"}
+        history_df = history_df[history_df["capital_allocation"].isin(valid_categories)]
+
+        # Sort by year ascending and convert to list of tuples
+        history_df = history_df.sort_values("year", ascending=True)
+        history = list(zip(history_df["year"], history_df["capital_allocation"]))
+
+        return history
+    except Exception:
+        return []
+
+
 # ── Badge colour ────────────────────────────────────────────────────────
 _BADGE_COLORS = {
     "Excellent": "#16a34a",  # green
@@ -551,8 +595,28 @@ _BADGE_COLORS = {
     "Poor": "#7f1d1d",      # dark red
 }
 
+# ── Chart-to-Image helper ──────────────────────────────────────────────
 
-# ── Drawing helpers ─────────────────────────────────────────────────────
+def _drawing_to_image(draw: Drawing, width: float, height: float, dpi: int = 150) -> Image:
+    """Convert a ReportLab Drawing to a platypus Image via renderPM to PNG."""
+    # Use a temporary file for the PNG
+    with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+        tmp_path = tmp.name
+    try:
+        # Render the drawing to PNG
+        renderPM.drawToFile(draw, tmp_path, fmt='PNG', dpi=dpi)
+        # Create platypus Image
+        img = Image(tmp_path, width=width, height=height)
+        return img
+    except Exception as e:
+        # Fallback: return a placeholder drawing as image
+        placeholder = Drawing(width, height)
+        placeholder.add(String(width/2, height/2, f"Chart unavailable",
+                               fontSize=10, textAnchor="middle"))
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+            tmp_path = tmp.name
+        renderPM.drawToFile(placeholder, tmp_path, fmt='PNG', dpi=dpi)
+        return Image(tmp_path, width=width, height=height)
 
 
 def _draw_header(draw: Drawing, company_id: str, company_name: str) -> Drawing:
@@ -647,18 +711,18 @@ def _draw_revenue_netprofit_chart(
     net_profit: List[Optional[float]],
     width: float,
     height: float,
-) -> Drawing:
-    """Grouped bar chart of Revenue and Net Profit."""
+) -> Image:
+    """Grouped bar chart of Revenue and Net Profit - returns platypus Image."""
     d = Drawing(width, height)
 
     if not years or all(v is None for v in revenue):
         d.add(String(width / 2, height / 2, "No data available",
                      fontSize=10, textAnchor="middle"))
-        return d
+        return _drawing_to_image(d, width, height)
 
     n = len(years)
 
-    # Build bar data — VerticalBarChart expects list of lists for grouped bars
+    # Build bar data — VerticalBarChart expects list of lists for grouped bars (one list per series)
     rev_vals = [v if v is not None else 0 for v in revenue]
     np_vals = [v if v is not None else 0 for v in net_profit]
 
@@ -667,7 +731,8 @@ def _draw_revenue_netprofit_chart(
     bar_plot.y = 25
     bar_plot.width = width - 50
     bar_plot.height = height - 45
-    bar_plot.data = list(zip(rev_vals, np_vals))
+    # Data should be a list of lists: [series1, series2] where each series is a list of values
+    bar_plot.data = [rev_vals, np_vals]
     bar_plot.barWidth = min((width - 50) / max(n, 1) / 2.5, 15)
     bar_plot.groupSpacing = 3
     bar_plot.categoryAxis.categoryNames = [str(y) for y in years]
@@ -696,7 +761,7 @@ def _draw_revenue_netprofit_chart(
     d.add(bar_plot)
     d.add(String(width / 2, height - 8, "Revenue & Net Profit (10-Yr)",
                  fontSize=9, fontName="Helvetica-Bold", textAnchor="middle"))
-    return d
+    return _drawing_to_image(d, width, height)
 
 
 def _draw_roe_roce_chart(
@@ -705,14 +770,14 @@ def _draw_roe_roce_chart(
     roce: List[Optional[float]],
     width: float,
     height: float,
-) -> Drawing:
-    """Dual-axis line chart of ROE and ROCE."""
+) -> Image:
+    """Dual-axis line chart of ROE and ROCE - returns platypus Image."""
     d = Drawing(width, height)
 
     if not years or all(v is None for v in roe):
         d.add(String(width / 2, height / 2, "No data available",
                      fontSize=10, textAnchor="middle"))
-        return d
+        return _drawing_to_image(d, width, height)
 
     line_chart = VerticalLineChart()
     line_chart.x = 20
@@ -754,7 +819,7 @@ def _draw_roe_roce_chart(
     d.add(line_chart)
     d.add(String(width / 2, height - 8, "ROE & ROCE Trend",
                  fontSize=9, fontName="Helvetica-Bold", textAnchor="middle"))
-    return d
+    return _drawing_to_image(d, width, height)
 
 
 def _draw_balancesheet_stacked_bar(
@@ -764,8 +829,8 @@ def _draw_balancesheet_stacked_bar(
     other_liab: List[Optional[float]],
     width: float,
     height: float,
-) -> Drawing:
-    """Stacked bar chart of Balance Sheet composition.
+) -> Image:
+    """Stacked bar chart of Balance Sheet composition - returns platypus Image.
 
     Since VerticalBarChart does not support true stacking in ReportLab,
     we draw the chart manually with Rect primitives.
@@ -775,7 +840,7 @@ def _draw_balancesheet_stacked_bar(
     if not years or all(v is None for v in equity):
         d.add(String(width / 2, height / 2, "No data available",
                      fontSize=10, textAnchor="middle"))
-        return d
+        return _drawing_to_image(d, width, height)
 
     n = len(years)
     colors_list = [colors.HexColor("#2563eb"), colors.HexColor("#059669"), colors.HexColor("#dc2626")]
@@ -830,7 +895,7 @@ def _draw_balancesheet_stacked_bar(
         d.add(Rect(legend_x, legend_y - i * 10, 6, 6, fillColor=c))
         d.add(String(legend_x + 8, legend_y - i * 10 + 2, lbl, fontSize=6))
 
-    return d
+    return _drawing_to_image(d, width, height)
 
 
 def _draw_cashflow_waterfall(
@@ -838,14 +903,14 @@ def _draw_cashflow_waterfall(
     components: List[Tuple[str, Optional[float]]],
     width: float,
     height: float,
-) -> Drawing:
-    """Waterfall-style bar chart of cash flow components."""
+) -> Image:
+    """Waterfall-style bar chart of cash flow components - returns platypus Image."""
     d = Drawing(width, height)
 
     if not components or all(v is None for _, v in components):
         d.add(String(width / 2, height / 2, "No data available",
                      fontSize=10, textAnchor="middle"))
-        return d
+        return _drawing_to_image(d, width, height)
 
     labels = [c[0] for c in components]
     values = [c[1] if c[1] is not None else 0 for c in components]
@@ -880,13 +945,13 @@ def _draw_cashflow_waterfall(
     d.add(String(width / 2, height - 8,
                  f"Cash Flow Waterfall ({year_label})",
                  fontSize=9, fontName="Helvetica-Bold", textAnchor="middle"))
-    return d
+    return _drawing_to_image(d, width, height)
 
 
 # ── Badge ──────────────────────────────────────────────────────────────
 
-def _draw_ca_badge(category: str, width: float, height: float) -> Drawing:
-    """Draw a coloured badge with the capital-allocation category."""
+def _draw_ca_badge(category: str, width: float, height: float) -> Image:
+    """Draw a coloured badge with the capital-allocation category - returns platypus Image."""
     color = _BADGE_COLORS.get(category, "#6b7280")
     d = Drawing(width, height)
     d.hAlign = "CENTER"
@@ -905,7 +970,7 @@ def _draw_ca_badge(category: str, width: float, height: float) -> Drawing:
     )
     d.add(text)
 
-    return d
+    return _drawing_to_image(d, width, height)
 
 
 # ── Page builders ──────────────────────────────────────────────────────
@@ -985,81 +1050,55 @@ def _build_page2(
     pros: List[str],
     cons: List[str],
     capital_allocation: str,
+    rp_years: List[int],
+    rp_revenue: List[Optional[float]],
+    rp_netprofit: List[Optional[float]],
+    bs_equity_capital: List[Optional[float]],
+    bs_reserves: List[Optional[float]],
+    valuation_df: pd.DataFrame,
+    capital_allocation_history: List[Tuple[str, str]],
 ) -> List[Any]:
     """Build the list of flowables for Page 2."""
     elements: List[Any] = []
-    avail_height = PAGE_HEIGHT - 2 * 10 * mm  # account for margins
 
-    # ── Balance Sheet ───────────────────────────────────────────────
+    # ── Balance Sheet Composition Chart ─────────────────────────────────────
     elements.append(Paragraph("Balance Sheet Composition", _style_section_title))
     chart_width = PAGE_WIDTH - 20 * mm
     bs_chart = _draw_balancesheet_stacked_bar(
         bs_years, bs_equity, bs_borrowings, bs_other_liab,
-        chart_width, 55 * mm,
+        chart_width, 40 * mm,
     )
     elements.append(bs_chart)
-    elements.append(Spacer(1, 4 * mm))
+    elements.append(Spacer(1, 6 * mm))
 
-    # ── Cash Flow ───────────────────────────────────────────────────
+    # ── Cash Flow Waterfall Chart ──────────────────────────────────────────
     elements.append(Paragraph("Cash Flow Waterfall", _style_section_title))
     cf_chart_width = PAGE_WIDTH - 20 * mm
-    cf_chart = _draw_cashflow_waterfall(cf_year, cf_components, cf_chart_width, 35 * mm)
+    cf_chart = _draw_cashflow_waterfall(cf_year, cf_components, cf_chart_width, 40 * mm)
     elements.append(cf_chart)
-    elements.append(Spacer(1, 5 * mm))
+    elements.append(Spacer(1, 6 * mm))
 
-    # ── Pros / Cons / Badge ──────────────────────────────────────────
-    # Constrain to keep within 2 pages
-    max_pros = 3
-    max_cons = 3
-
-    truncated_pros = [_truncate_text(p, 180) for p in pros[:max_pros]]
-    truncated_cons = [_truncate_text(c, 180) for c in cons[:max_cons]]
-
-    # Build pros paragraphs
-    pros_rows = [Paragraph("Pros", _style_section_title)]
-    if truncated_pros:
-        for p in truncated_pros:
-            pros_rows.append(Paragraph(p, _style_pros_cons))
-    else:
-        pros_rows.append(Paragraph("No pros data available", _style_section_body))
-
-    # Build cons paragraphs
-    cons_rows = [Paragraph("Cons", _style_section_title)]
-    if truncated_cons:
-        for c in truncated_cons:
-            cons_rows.append(Paragraph(c, _style_pros_cons))
-    else:
-        cons_rows.append(Paragraph("No cons data available", _style_section_body))
-
-    # Use a table with Paragraph cells for Pros | Cons
-    half_width = (PAGE_WIDTH - 20 * mm) / 2
-    col_data = []
-    max_rows = max(len(pros_rows), len(cons_rows))
-    for i in range(max_rows):
-        p_cell = pros_rows[i] if i < len(pros_rows) else Paragraph("", _style_section_body)
-        c_cell = cons_rows[i] if i < len(cons_rows) else Paragraph("", _style_section_body)
-        col_data.append([p_cell, c_cell])
-
-    pros_cons_table = Table(col_data, colWidths=[half_width - 2 * mm, half_width - 2 * mm])
-    pros_cons_table.setStyle(
-        TableStyle(
-            [
-                ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                ("LEFTPADDING", (0, 0), (-1, -1), 2),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 2),
-                ("TOPPADDING", (0, 0), (-1, -1), 0),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
-                ("LEFTPADDING", (1, 0), (1, -1), 4),
-            ]
-        )
-    )
-    elements.append(pros_cons_table)
+    # ── Pros (limited to 5) ───────────────────────────────────────────────
+    elements.append(Paragraph("Pros", _style_section_title))
+    max_pros = 5
+    for p in pros[:max_pros]:
+        elements.append(Paragraph(p, _style_pros_cons))
+    if not pros:
+        elements.append(Paragraph("No pros data available", _style_section_body))
     elements.append(Spacer(1, 4 * mm))
 
-    # Badge
+    # ── Cons (limited to 4) ───────────────────────────────────────────────
+    elements.append(Paragraph("Cons", _style_section_title))
+    max_cons = 4
+    for c in cons[:max_cons]:
+        elements.append(Paragraph(_truncate_text(c, 200), _style_pros_cons))
+    if not cons:
+        elements.append(Paragraph("No cons data available", _style_section_body))
+    elements.append(Spacer(1, 4 * mm))
+
+    # ── Capital Allocation Badge ──────────────────────────────────────────
     elements.append(Paragraph("Capital Allocation", _style_section_title))
     badge = _draw_ca_badge(capital_allocation, 35 * mm, 16 * mm)
-    elements.append(Spacer(1, 2 * mm))
     elements.append(badge)
 
     return elements
@@ -1106,11 +1145,28 @@ def generate_tearsheet(
     tiles = _get_kpi_data(company_id)
     rp_years, rp_revenue, rp_netprofit = _get_revenue_netprofit_data(company_id)
     rr_years, rr_roe, rr_roce = _get_roe_roce_data(company_id)
-    bs_years, bs_equity, bs_borrowings, bs_other_liab = _get_balancesheet_data(company_id)
+    bs_years, bs_equity_capital, bs_reserves, bs_borrowings, bs_other_liab = _get_balancesheet_data(company_id, 10)
+    # Calculate total equity from equity_capital + reserves
+    bs_equity = []
+    for eq_cap, res in zip(bs_equity_capital, bs_reserves):
+        if eq_cap is not None and res is not None:
+            bs_equity.append(eq_cap + res)
+        elif eq_cap is not None:
+            bs_equity.append(eq_cap)
+        elif res is not None:
+            bs_equity.append(res)
+        else:
+            bs_equity.append(None)
+
     cf_year, cf_components = _get_cashflow_waterfall(company_id)
     pros = _get_pros(company_id)
     cons = _get_cons(company_id)
     capital_allocation = _get_capital_allocation(company_id)
+    # Fetch valuation data
+    from src.dashboard.utils.db import get_valuation
+    valuation_df = get_valuation(company_id)
+    # Fetch capital allocation history
+    capital_allocation_history = _get_capital_allocation_history(company_id)
 
     # ── Build pages ───────────────────────────────────────────────────
     page1 = _build_page1(
@@ -1123,6 +1179,9 @@ def generate_tearsheet(
         bs_years, bs_equity, bs_borrowings, bs_other_liab,
         cf_year, cf_components,
         pros, cons, capital_allocation,
+        rp_years, rp_revenue, rp_netprofit,
+        bs_equity_capital, bs_reserves,
+        valuation_df, capital_allocation_history,
     )
 
     # ── Ensure output dir exists ─────────────────────────────────────
@@ -1134,10 +1193,10 @@ def generate_tearsheet(
     doc = SimpleDocTemplate(
         output_path,
         pagesize=A4,
-        leftMargin=10 * mm,
-        rightMargin=10 * mm,
-        topMargin=10 * mm,
-        bottomMargin=10 * mm,
+        leftMargin=2 * mm,
+        rightMargin=2 * mm,
+        topMargin=2 * mm,
+        bottomMargin=2 * mm,
     )
 
     story: List[Any] = []

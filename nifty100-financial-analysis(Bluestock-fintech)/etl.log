@@ -133,3 +133,451 @@ AttributeError: 'list' object has no attribute 'columns'
 2026-07-16 22:32:46,971 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
 2026-07-16 22:32:50,116 - __main__ - INFO - Loaded stock_prices: 5520 rows loaded, 0 rejected, 0.152s, status=SUCCESS
 2026-07-16 22:32:50,119 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-08-17 12:41:32,681 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-08-17 12:41:32,683 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-08-17 12:41:33,110 - __main__ - ERROR - Exception during insert for table companies: IntegrityError: UNIQUE constraint failed: companies.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: companies.id
+2026-08-17 12:41:33,298 - __main__ - INFO - Loaded companies: 0 rows loaded, 92 rejected, 0.195s, status=INSERT_ERROR: UNIQUE constraint failed: companies.id
+2026-08-17 12:41:33,298 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-08-17 12:41:33,352 - __main__ - ERROR - Exception during insert for table sectors: IntegrityError: UNIQUE constraint failed: sectors.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: sectors.id
+2026-08-17 12:41:33,354 - __main__ - INFO - Loaded sectors: 0 rows loaded, 92 rejected, 0.006s, status=INSERT_ERROR: UNIQUE constraint failed: sectors.id
+2026-08-17 12:41:33,354 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-08-17 12:41:33,394 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.009s, status=SUCCESS
+2026-08-17 12:41:33,395 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-08-17 12:41:33,690 - __main__ - ERROR - Exception during insert for table documents: IntegrityError: UNIQUE constraint failed: documents.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: documents.id
+2026-08-17 12:41:33,691 - __main__ - INFO - Loaded documents: 0 rows loaded, 1585 rejected, 0.015s, status=INSERT_ERROR: UNIQUE constraint failed: documents.id
+2026-08-17 12:41:33,691 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-08-17 12:41:33,743 - __main__ - ERROR - Exception during insert for table prosandcons: IntegrityError: UNIQUE constraint failed: prosandcons.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: prosandcons.id
+2026-08-17 12:41:33,744 - __main__ - INFO - Loaded prosandcons: 0 rows loaded, 16 rejected, 0.003s, status=INSERT_ERROR: UNIQUE constraint failed: prosandcons.id
+2026-08-17 12:41:33,744 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-08-17 12:41:33,775 - __main__ - ERROR - Exception during insert for table analysis: IntegrityError: UNIQUE constraint failed: analysis.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: analysis.id
+2026-08-17 12:41:33,776 - __main__ - INFO - Loaded analysis: 0 rows loaded, 20 rejected, 0.001s, status=INSERT_ERROR: UNIQUE constraint failed: analysis.id
+2026-08-17 12:41:33,776 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-08-17 12:41:34,303 - __main__ - INFO - Loaded financial_ratios: 1184 rows loaded, 0 rejected, 0.056s, status=SUCCESS
+2026-08-17 12:41:34,303 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-08-17 12:41:34,485 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.020s, status=SUCCESS
+2026-08-17 12:41:34,485 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-08-17 12:41:34,972 - __main__ - ERROR - Exception during insert for table profitandloss: IntegrityError: UNIQUE constraint failed: profitandloss.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: profitandloss.id
+2026-08-17 12:41:34,973 - __main__ - INFO - Loaded profitandloss: 0 rows loaded, 1276 rejected, 0.007s, status=INSERT_ERROR: UNIQUE constraint failed: profitandloss.id
+2026-08-17 12:41:34,974 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-08-17 12:41:35,453 - __main__ - ERROR - Exception during insert for table balancesheet: IntegrityError: UNIQUE constraint failed: balancesheet.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: balancesheet.id
+2026-08-17 12:41:35,454 - __main__ - INFO - Loaded balancesheet: 0 rows loaded, 1312 rejected, 0.008s, status=INSERT_ERROR: UNIQUE constraint failed: balancesheet.id
+2026-08-17 12:41:35,454 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-08-17 12:41:35,699 - __main__ - ERROR - Exception during insert for table cashflow: IntegrityError: UNIQUE constraint failed: cashflow.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: cashflow.id
+2026-08-17 12:41:35,701 - __main__ - INFO - Loaded cashflow: 0 rows loaded, 1187 rejected, 0.003s, status=INSERT_ERROR: UNIQUE constraint failed: cashflow.id
+2026-08-17 12:41:35,701 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-08-17 12:41:36,993 - __main__ - ERROR - Exception during insert for table stock_prices: IntegrityError: UNIQUE constraint failed: stock_prices.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: stock_prices.id
+2026-08-17 12:41:36,994 - __main__ - INFO - Loaded stock_prices: 0 rows loaded, 5520 rejected, 0.008s, status=INSERT_ERROR: UNIQUE constraint failed: stock_prices.id
+2026-08-17 12:41:36,997 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv
+2026-08-17 12:51:24,505 - __main__ - INFO - Database initialized with schema from C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\db\schema.sql
+2026-08-17 12:51:24,507 - __main__ - INFO - Processing companies (companies.xlsx)
+2026-08-17 12:51:25,055 - __main__ - ERROR - Exception during insert for table companies: IntegrityError: UNIQUE constraint failed: companies.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: companies.id
+2026-08-17 12:51:25,064 - __main__ - INFO - Loaded companies: 0 rows loaded, 92 rejected, 0.019s, status=INSERT_ERROR: UNIQUE constraint failed: companies.id
+2026-08-17 12:51:25,064 - __main__ - INFO - Processing sectors (sectors.xlsx)
+2026-08-17 12:51:25,105 - __main__ - ERROR - Exception during insert for table sectors: IntegrityError: UNIQUE constraint failed: sectors.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: sectors.id
+2026-08-17 12:51:25,107 - __main__ - INFO - Loaded sectors: 0 rows loaded, 92 rejected, 0.004s, status=INSERT_ERROR: UNIQUE constraint failed: sectors.id
+2026-08-17 12:51:25,107 - __main__ - INFO - Processing peer_groups (peer_groups.xlsx)
+2026-08-17 12:51:25,151 - __main__ - INFO - Loaded peer_groups: 56 rows loaded, 0 rejected, 0.013s, status=SUCCESS
+2026-08-17 12:51:25,151 - __main__ - INFO - Processing documents (documents.xlsx)
+2026-08-17 12:51:25,397 - __main__ - ERROR - Exception during insert for table documents: IntegrityError: UNIQUE constraint failed: documents.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: documents.id
+2026-08-17 12:51:25,397 - __main__ - INFO - Loaded documents: 0 rows loaded, 1585 rejected, 0.015s, status=INSERT_ERROR: UNIQUE constraint failed: documents.id
+2026-08-17 12:51:25,398 - __main__ - INFO - Processing prosandcons (prosandcons.xlsx)
+2026-08-17 12:51:25,445 - __main__ - ERROR - Exception during insert for table prosandcons: IntegrityError: UNIQUE constraint failed: prosandcons.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: prosandcons.id
+2026-08-17 12:51:25,448 - __main__ - INFO - Loaded prosandcons: 0 rows loaded, 16 rejected, 0.006s, status=INSERT_ERROR: UNIQUE constraint failed: prosandcons.id
+2026-08-17 12:51:25,449 - __main__ - INFO - Processing analysis (analysis.xlsx)
+2026-08-17 12:51:25,483 - __main__ - ERROR - Exception during insert for table analysis: IntegrityError: UNIQUE constraint failed: analysis.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: analysis.id
+2026-08-17 12:51:25,484 - __main__ - INFO - Loaded analysis: 0 rows loaded, 20 rejected, 0.003s, status=INSERT_ERROR: UNIQUE constraint failed: analysis.id
+2026-08-17 12:51:25,484 - __main__ - INFO - Processing financial_ratios (financial_ratios.xlsx)
+2026-08-17 12:51:26,130 - __main__ - INFO - Loaded financial_ratios: 1184 rows loaded, 0 rejected, 0.044s, status=SUCCESS
+2026-08-17 12:51:26,130 - __main__ - INFO - Processing market_cap (market_cap.xlsx)
+2026-08-17 12:51:26,330 - __main__ - INFO - Loaded market_cap: 552 rows loaded, 0 rejected, 0.026s, status=SUCCESS
+2026-08-17 12:51:26,331 - __main__ - INFO - Processing profitandloss (profitandloss.xlsx)
+2026-08-17 12:51:26,849 - __main__ - ERROR - Exception during insert for table profitandloss: IntegrityError: UNIQUE constraint failed: profitandloss.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: profitandloss.id
+2026-08-17 12:51:26,850 - __main__ - INFO - Loaded profitandloss: 0 rows loaded, 1276 rejected, 0.007s, status=INSERT_ERROR: UNIQUE constraint failed: profitandloss.id
+2026-08-17 12:51:26,850 - __main__ - INFO - Processing balancesheet (balancesheet.xlsx)
+2026-08-17 12:51:27,297 - __main__ - ERROR - Exception during insert for table balancesheet: IntegrityError: UNIQUE constraint failed: balancesheet.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: balancesheet.id
+2026-08-17 12:51:27,298 - __main__ - INFO - Loaded balancesheet: 0 rows loaded, 1312 rejected, 0.005s, status=INSERT_ERROR: UNIQUE constraint failed: balancesheet.id
+2026-08-17 12:51:27,298 - __main__ - INFO - Processing cashflow (cashflow.xlsx)
+2026-08-17 12:51:27,533 - __main__ - ERROR - Exception during insert for table cashflow: IntegrityError: UNIQUE constraint failed: cashflow.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: cashflow.id
+2026-08-17 12:51:27,534 - __main__ - INFO - Loaded cashflow: 0 rows loaded, 1187 rejected, 0.005s, status=INSERT_ERROR: UNIQUE constraint failed: cashflow.id
+2026-08-17 12:51:27,534 - __main__ - INFO - Processing stock_prices (stock_prices.xlsx)
+2026-08-17 12:51:28,761 - __main__ - ERROR - Exception during insert for table stock_prices: IntegrityError: UNIQUE constraint failed: stock_prices.id
+Traceback (most recent call last):
+  File "C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\src\etl\loader.py", line 132, in _load_table
+    df_to_insert.to_sql(
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\util\_decorators.py", line 333, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py", line 3109, in to_sql
+    return sql.to_sql(
+           ^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 844, in to_sql
+    return pandas_sql.to_sql(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2841, in to_sql
+    return table.insert(chunksize, method)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 1121, in insert
+    num_inserted = exec_insert(conn, keys, chunk_iter)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hitoy\AppData\Roaming\Python\Python312\site-packages\pandas\io\sql.py", line 2543, in _execute_insert_multi
+    conn.execute(self.insert_statement(num_rows=len(data_list)), flattened_data)
+sqlite3.IntegrityError: UNIQUE constraint failed: stock_prices.id
+2026-08-17 12:51:28,764 - __main__ - INFO - Loaded stock_prices: 0 rows loaded, 5520 rejected, 0.024s, status=INSERT_ERROR: UNIQUE constraint failed: stock_prices.id
+2026-08-17 12:51:28,768 - __main__ - INFO - ETL completed. Audit written to C:\Users\hitoy\Downloads\Bluestock_fintech\nifty100-financial-analysis(Bluestock-fintech)\data\output\load_audit.csv

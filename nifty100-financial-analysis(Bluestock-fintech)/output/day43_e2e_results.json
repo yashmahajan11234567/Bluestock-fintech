@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-08-16T11:07:53.247572",
+  "fastapi": {
+    "started": true,
+    "port": 8000,
+    "ready": true,
+    "health": true,
+    "docs": true
+  },
+  "streamlit": {
+    "started": true,
+    "port": 8501,
+    "ready": true,
+    "data_load": true
+  },
+  "port_conflict": true
+}

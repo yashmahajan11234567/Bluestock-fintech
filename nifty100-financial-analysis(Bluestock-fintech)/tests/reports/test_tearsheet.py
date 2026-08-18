@@ -169,9 +169,10 @@ class TestMissingData:
 
     def test_balancesheet_handles_empty(self):
         """Balance sheet extraction handles empty BS."""
-        years, eq, br, ol = _get_balancesheet_data("NONEXISTENT")
+        years, eq_cap, res, br, ol = _get_balancesheet_data("NONEXISTENT")
         assert years == []
-        assert eq == []
+        assert eq_cap == []
+        assert res == []
         assert br == []
         assert ol == []
 
@@ -259,18 +260,22 @@ class TestBalanceSheetData:
 
     def test_balancesheet_data_tcs(self):
         """TCS should have balance sheet data."""
-        years, eq, br, ol = _get_balancesheet_data("TCS")
+        years, eq_cap, res, br, ol = _get_balancesheet_data("TCS")
+        # Compute total equity from equity_capital and reserves
+        eq = [ (a or 0) + (b or 0) for a, b in zip(eq_cap, res) ]
         assert len(years) > 0
         assert len(years) == len(eq) == len(br) == len(ol)
 
     def test_balancesheet_max_years(self):
         """Should return at most 5 years."""
-        years, _, _, _ = _get_balancesheet_data("TCS")
+        years, _, _, _, _ = _get_balancesheet_data("TCS")
         assert len(years) <= 5
 
     def test_equity_has_values(self):
         """Equity values should be populated for TCS."""
-        _, eq, _, _ = _get_balancesheet_data("TCS")
+        years, eq_cap, res, br, ol = _get_balancesheet_data("TCS")
+        # Compute total equity from equity_capital and reserves
+        eq = [ (a or 0) + (b or 0) for a, b in zip(eq_cap, res) ]
         non_none = [v for v in eq if v is not None]
         assert len(non_none) > 0
 

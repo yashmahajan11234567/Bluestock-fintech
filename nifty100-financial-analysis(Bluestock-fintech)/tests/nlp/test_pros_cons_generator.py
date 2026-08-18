@@ -818,24 +818,26 @@ class TestUnsupportedRuleIDs:
         """CON_RULES must contain exactly 12 rules (CON_1 through CON_12)."""
         assert len(CON_RULES) == 12
 
-    def test_no_pro_13_signals_generated(self):
+    def test_no_pro_13_signals_generated(self, tmp_path):
         """No signal should ever have rule_id PRO_13."""
         from src.nlp.pros_cons_generator import generate_output
+        test_output = tmp_path / "pros_cons_test.csv"
         with patch('src.nlp.pros_cons_generator.get_company_list') as mock_list:
             mock_list.return_value = [{'company_id': 'TEST', 'company_name': 'Test Co'}]
             with patch('src.nlp.pros_cons_generator.load_company_data') as mock_load:
                 mock_load.return_value = make_company_data()
-                df = generate_output()
+                df = generate_output(str(test_output))
                 assert 'PRO_13' not in df['rule_id'].values
 
-    def test_no_con_13_signals_generated(self):
+    def test_no_con_13_signals_generated(self, tmp_path):
         """No signal should ever have rule_id CON_13."""
         from src.nlp.pros_cons_generator import generate_output
+        test_output = tmp_path / "pros_cons_test.csv"
         with patch('src.nlp.pros_cons_generator.get_company_list') as mock_list:
             mock_list.return_value = [{'company_id': 'TEST', 'company_name': 'Test Co'}]
             with patch('src.nlp.pros_cons_generator.load_company_data') as mock_load:
                 mock_load.return_value = make_company_data()
-                df = generate_output()
+                df = generate_output(str(test_output))
                 assert 'CON_13' not in df['rule_id'].values
 
 

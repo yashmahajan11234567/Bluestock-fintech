@@ -1,0 +1,582 @@
+{
+  "timestamp": "2026-08-16T12:00:29.049997",
+  "environment": {
+    "python": "3.12.2 (tags/v3.12.2:6abddd9, Feb  6 2024, 21:26:36) [MSC v.1937 64 bit (AMD64)]",
+    "os": "Windows-11-10.0.26200-SP0",
+    "sqlite": "3.43.1",
+    "db_path": "C:\\Users\\hitoy\\Downloads\\Bluestock_fintech\\nifty100-financial-analysis(Bluestock-fintech)\\db\\nifty100.db"
+  },
+  "db_fingerprint_before": {
+    "companies": 92,
+    "profitandloss": 1177,
+    "balancesheet": 1227,
+    "cashflow": 1091,
+    "analysis": 16,
+    "documents": 1457,
+    "prosandcons": 14,
+    "sectors": 92,
+    "stock_prices": 5520,
+    "financial_ratios": 31668,
+    "market_cap": 552,
+    "peer_groups": 56
+  },
+  "db_fingerprint_after": {
+    "companies": 92,
+    "profitandloss": 1177,
+    "balancesheet": 1227,
+    "cashflow": 1091,
+    "analysis": 16,
+    "documents": 1457,
+    "prosandcons": 14,
+    "sectors": 92,
+    "stock_prices": 5520,
+    "financial_ratios": 31668,
+    "market_cap": 552,
+    "peer_groups": 56
+  },
+  "db_data_unchanged": true,
+  "screener_load_test": {
+    "endpoint": "GET /api/v1/screener?page_size=10",
+    "methodology": "FastAPI TestClient \u2014 real application execution path (no HTTP server started). 10 concurrent via ThreadPoolExecutor(max_workers=10).",
+    "individual_times": [
+      {
+        "req_id": 0,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3673
+      },
+      {
+        "req_id": 1,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3679
+      },
+      {
+        "req_id": 2,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3665
+      },
+      {
+        "req_id": 3,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3662
+      },
+      {
+        "req_id": 4,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3651
+      },
+      {
+        "req_id": 5,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3658
+      },
+      {
+        "req_id": 6,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3654
+      },
+      {
+        "req_id": 7,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3647
+      },
+      {
+        "req_id": 8,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3648
+      },
+      {
+        "req_id": 9,
+        "status": 200,
+        "ok": true,
+        "elapsed": 0.3644
+      }
+    ],
+    "min": 0.3644,
+    "max": 0.3679,
+    "avg": 0.3658,
+    "median": 0.3656,
+    "total_wall_clock": 0.37,
+    "success_count": 10,
+    "failure_count": 0,
+    "status_codes": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "target": "All 10 requests complete within 10 seconds.",
+    "target_seconds": 10,
+    "PASS": true
+  },
+  "company_profile_tests": {
+    "tickers_used": [
+      "ABB",
+      "ADANIENSOL",
+      "ADANIENT",
+      "ADANIGREEN",
+      "ADANIPORTS"
+    ],
+    "results": [
+      {
+        "ticker": "ABB",
+        "start_time": "2026-08-16 12:00:27",
+        "end_time": "2026-08-16 12:00:27",
+        "elapsed_seconds": 0.0126,
+        "success": true,
+        "profile_exists": true,
+        "ratios_rows": 13,
+        "cashflow_rows": 23,
+        "capital_alloc_rows": 12,
+        "target": "Each < 3 seconds.",
+        "PASS": true
+      },
+      {
+        "ticker": "ADANIENSOL",
+        "start_time": "2026-08-16 12:00:27",
+        "end_time": "2026-08-16 12:00:27",
+        "elapsed_seconds": 0.0107,
+        "success": true,
+        "profile_exists": true,
+        "ratios_rows": 12,
+        "cashflow_rows": 11,
+        "capital_alloc_rows": 11,
+        "target": "Each < 3 seconds.",
+        "PASS": true
+      },
+      {
+        "ticker": "ADANIENT",
+        "start_time": "2026-08-16 12:00:27",
+        "end_time": "2026-08-16 12:00:27",
+        "elapsed_seconds": 0.012,
+        "success": true,
+        "profile_exists": true,
+        "ratios_rows": 13,
+        "cashflow_rows": 12,
+        "capital_alloc_rows": 12,
+        "target": "Each < 3 seconds.",
+        "PASS": true
+      },
+      {
+        "ticker": "ADANIGREEN",
+        "start_time": "2026-08-16 12:00:27",
+        "end_time": "2026-08-16 12:00:27",
+        "elapsed_seconds": 0.0098,
+        "success": true,
+        "profile_exists": true,
+        "ratios_rows": 9,
+        "cashflow_rows": 8,
+        "capital_alloc_rows": 8,
+        "target": "Each < 3 seconds.",
+        "PASS": true
+      },
+      {
+        "ticker": "ADANIPORTS",
+        "start_time": "2026-08-16 12:00:27",
+        "end_time": "2026-08-16 12:00:27",
+        "elapsed_seconds": 0.0184,
+        "success": true,
+        "profile_exists": true,
+        "ratios_rows": 13,
+        "cashflow_rows": 12,
+        "capital_alloc_rows": 12,
+        "target": "Each < 3 seconds.",
+        "PASS": true
+      }
+    ],
+    "fastest": 0.0098,
+    "slowest": 0.0184,
+    "average": 0.0127,
+    "target": "Each < 3 seconds.",
+    "target_seconds": 3,
+    "success_count": 5,
+    "total_count": 5,
+    "PASS": true,
+    "timing_type": "Backend/data-path timing via direct db.py function calls (not browser-rendered. Full data-loading path from _02_profile.py is exercised)."
+  },
+  "sqlite_analysis": {
+    "relevant_tables": {
+      "financial_ratios": {
+        "has_company_id": true,
+        "has_year": true,
+        "columns": [
+          "id",
+          "company_id",
+          "year",
+          "net_profit_margin_pct",
+          "operating_profit_margin_pct",
+          "return_on_equity_pct",
+          "debt_to_equity",
+          "interest_coverage",
+          "asset_turnover",
+          "free_cash_flow_cr",
+          "capex_cr",
+          "earnings_per_share",
+          "book_value_per_share",
+          "dividend_payout_ratio_pct",
+          "total_debt_cr",
+          "cash_from_operations_cr"
+        ]
+      },
+      "profitandloss": {
+        "has_company_id": true,
+        "has_year": true,
+        "columns": [
+          "id",
+          "company_id",
+          "year",
+          "sales",
+          "expenses",
+          "operating_profit",
+          "opm_percentage",
+          "other_income",
+          "interest",
+          "depreciation",
+          "profit_before_tax",
+          "tax_percentage",
+          "net_profit",
+          "eps",
+          "dividend_payout"
+        ]
+      },
+      "balancesheet": {
+        "has_company_id": true,
+        "has_year": true,
+        "columns": [
+          "id",
+          "company_id",
+          "year",
+          "equity_capital",
+          "reserves",
+          "borrowings",
+          "other_liabilities",
+          "total_liabilities",
+          "fixed_assets",
+          "cwip",
+          "investments",
+          "other_asset",
+          "total_assets"
+        ]
+      },
+      "cashflow": {
+        "has_company_id": true,
+        "has_year": true,
+        "columns": [
+          "id",
+          "company_id",
+          "year",
+          "operating_activity",
+          "investing_activity",
+          "financing_activity",
+          "net_cash_flow"
+        ]
+      },
+      "market_cap": {
+        "has_company_id": true,
+        "has_year": true,
+        "columns": [
+          "id",
+          "company_id",
+          "year",
+          "market_cap_crore",
+          "enterprise_value_crore",
+          "pe_ratio",
+          "pb_ratio",
+          "ev_ebitda",
+          "dividend_yield_pct"
+        ]
+      },
+      "stock_prices": {
+        "has_company_id": true,
+        "has_year": false,
+        "columns": [
+          "id",
+          "company_id",
+          "date",
+          "open_price",
+          "high_price",
+          "low_price",
+          "close_price",
+          "volume",
+          "adjusted_close"
+        ]
+      },
+      "peer_groups": {
+        "has_company_id": true,
+        "has_year": false,
+        "columns": [
+          "id",
+          "peer_group_name",
+          "company_id",
+          "is_benchmark"
+        ]
+      },
+      "prosandcons": {
+        "has_company_id": true,
+        "has_year": false,
+        "columns": [
+          "id",
+          "company_id",
+          "pros",
+          "cons"
+        ]
+      },
+      "documents": {
+        "has_company_id": true,
+        "has_year": false,
+        "columns": [
+          "id",
+          "company_id",
+          "Year",
+          "Annual_Report"
+        ]
+      },
+      "analysis": {
+        "has_company_id": true,
+        "has_year": false,
+        "columns": [
+          "id",
+          "company_id",
+          "compounded_sales_growth",
+          "compounded_profit_growth",
+          "stock_price_cagr",
+          "roe"
+        ]
+      }
+    },
+    "existing_indexes": [
+      {
+        "name": "idx_analysis_company_id",
+        "table": "analysis",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_balancesheet_company_id",
+        "table": "balancesheet",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_balancesheet_year",
+        "table": "balancesheet",
+        "columns": [
+          "year"
+        ]
+      },
+      {
+        "name": "idx_cashflow_company_id",
+        "table": "cashflow",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_cashflow_year",
+        "table": "cashflow",
+        "columns": [
+          "year"
+        ]
+      },
+      {
+        "name": "idx_companies_id",
+        "table": "companies",
+        "columns": [
+          "id"
+        ]
+      },
+      {
+        "name": "idx_documents_company_id",
+        "table": "documents",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_documents_year",
+        "table": "documents",
+        "columns": [
+          "Year"
+        ]
+      },
+      {
+        "name": "idx_financial_ratios_company_id",
+        "table": "financial_ratios",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_financial_ratios_year",
+        "table": "financial_ratios",
+        "columns": [
+          "year"
+        ]
+      },
+      {
+        "name": "idx_profitandloss_company_id",
+        "table": "profitandloss",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_profitandloss_year",
+        "table": "profitandloss",
+        "columns": [
+          "year"
+        ]
+      },
+      {
+        "name": "idx_prosandcons_company_id",
+        "table": "prosandcons",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_sectors_company_id",
+        "table": "sectors",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_stock_prices_company_id",
+        "table": "stock_prices",
+        "columns": [
+          "company_id"
+        ]
+      },
+      {
+        "name": "idx_stock_prices_date",
+        "table": "stock_prices",
+        "columns": [
+          "date"
+        ]
+      }
+    ],
+    "query_plans": {
+      "screener": [
+        {
+          "id": 11,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SCAN fr"
+        },
+        {
+          "id": 16,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH c USING INDEX sqlite_autoindex_companies_1 (id=?)"
+        },
+        {
+          "id": 21,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH s USING INDEX idx_sectors_company_id (company_id=?)"
+        },
+        {
+          "id": 32,
+          "parent": 0,
+          "notused": 0,
+          "detail": "BLOOM FILTER ON m (company_id=? AND year=?)"
+        },
+        {
+          "id": 53,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH m USING AUTOMATIC PARTIAL COVERING INDEX (company_id=? AND year=?) LEFT-JOIN"
+        },
+        {
+          "id": 64,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH a USING INDEX idx_analysis_company_id (company_id=?) LEFT-JOIN"
+        },
+        {
+          "id": 72,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH pl USING INDEX idx_profitandloss_company_id (company_id=?) LEFT-JOIN"
+        }
+      ],
+      "company_profile": [
+        {
+          "id": 10,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH c USING INDEX sqlite_autoindex_companies_1 (id=?)"
+        },
+        {
+          "id": 17,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH s USING INDEX idx_sectors_company_id (company_id=?) LEFT-JOIN"
+        },
+        {
+          "id": 25,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SCAN m LEFT-JOIN"
+        }
+      ],
+      "financial_ratios": [
+        {
+          "id": 6,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH c USING INDEX sqlite_autoindex_companies_1 (id=?)"
+        },
+        {
+          "id": 12,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH fr USING INDEX idx_financial_ratios_company_id (company_id=?)"
+        },
+        {
+          "id": 52,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ],
+      "cashflow": [
+        {
+          "id": 4,
+          "parent": 0,
+          "notused": 0,
+          "detail": "SEARCH cashflow USING INDEX idx_cashflow_company_id (company_id=?)"
+        },
+        {
+          "id": 24,
+          "parent": 0,
+          "notused": 0,
+          "detail": "USE TEMP B-TREE FOR ORDER BY"
+        }
+      ]
+    },
+    "measured_query_timings": {
+      "screener_sql": 126.44,
+      "company_profile": 0.07,
+      "financial_ratios": 8.09,
+      "cashflow": 0.07
+    }
+  }
+}

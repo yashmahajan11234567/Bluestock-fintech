@@ -1,0 +1,32 @@
+{
+  "AC-01": {
+    "actual": 92,
+    "expected": 92,
+    "status": "PASS"
+  },
+  "AC-02": {
+    "companies_checked": 276,
+    "companies_with_enough_data": 173,
+    "percentage": 62.68115942028986,
+    "status": "FAIL"
+  },
+  "AC-03": {
+    "foreign_key_errors": [],
+    "error_count": 0,
+    "status": "PASS"
+  },
+  "AC-04": {
+    "actual": 31668,
+    "expected": 1100,
+    "status": "PASS"
+  },
+  "AC-06": {
+    "roe_samples": [],
+    "all_pass": true,
+    "status": "PASS"
+  },
+  "AC-14": {
+    "error": "no such table: peer_percentiles",
+    "status": "UNVERIFIABLE"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "AC-01": {
+    "actual": 92,
+    "expected": 92,
+    "status": "PASS"
+  },
+  "AC-02": {
+    "percentage": 0.0,
+    "status": "FAIL"
+  },
+  "AC-03": {
+    "error_count": 0,
+    "status": "PASS"
+  },
+  "AC-04": {
+    "actual": 31668,
+    "expected": 1100,
+    "status": "PASS"
+  },
+  "AC-06": {
+    "roe_samples": 5,
+    "status": "PASS"
+  },
+  "AC-14": {
+    "error": "no such table: peer_percentiles",
+    "status": "UNVERIFIABLE"
+  },
+  "AC-15": {
+    "actual_companies": 92,
+    "status": "PASS"
+  },
+  "AC-17": {
+    "pdf_count": 97,
+    "undersized": 17,
+    "status": "FAIL"
+  },
+  "AC-18": {
+    "collected": 0,
+    "passed": 0,
+    "failed": 0,
+    "status": "FAIL"
+  }
+}

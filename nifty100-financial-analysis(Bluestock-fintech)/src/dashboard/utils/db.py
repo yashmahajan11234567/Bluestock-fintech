@@ -95,6 +95,40 @@ def get_company_profile(company_id: str) -> dict | None:
     return _fetchone(sql, (company_id,))
 
 
+def get_pros_cons(company_id: str) -> list[dict]:
+    """
+    Return pros and cons rows for a company.
+
+    Returns
+    -------
+    list[dict] with keys: pros, cons
+    """
+    sql = """
+        SELECT pros, cons
+        FROM prosandcons
+        WHERE company_id = ?
+        ORDER BY id
+    """
+    return _fetchall(sql, (company_id,))
+
+
+def get_documents(company_id: str) -> list[dict]:
+    """
+    Return document rows (annual reports) for a company.
+
+    Returns
+    -------
+    list[dict] with keys: Year, Annual_Report
+    """
+    sql = """
+        SELECT Year, Annual_Report
+        FROM documents
+        WHERE company_id = ?
+        ORDER BY Year DESC NULLS LAST
+    """
+    return _fetchall(sql, (company_id,))
+
+
 def get_financial_ratios(company_id: str) -> pd.DataFrame:
     """
     Return financial ratios for a company as a DataFrame.
@@ -131,12 +165,15 @@ def get_financial_ratios(company_id: str) -> pd.DataFrame:
         FROM financial_ratios fr
         JOIN companies c ON c.id = fr.company_id
         WHERE fr.company_id = ?
+          AND fr.year != 'TTM'
         ORDER BY fr.year DESC
     """
     df = _fetch_df(sql, (company_id,))
     # Ensure year is integer
     if not df.empty:
         df["year"] = pd.to_numeric(df["year"], errors="coerce").astype("Int64")
+        # Filter out rows where year could not be parsed (CAST failures)
+        df = df[df["year"].notna()]
         # Deduplicate: keep first row per year
         df = df.drop_duplicates(subset=["year"], keep="first")
     return df
@@ -524,6 +561,7 @@ def get_screener_results(filters: dict | None = None, sort_by: str = "company_id
                fr.free_cash_flow_cr, fr.cash_from_operations_cr,
                fr.net_profit_margin_pct,
                m.pe_ratio, m.pb_ratio, m.dividend_yield_pct,
+               m.market_cap_crore,
                a.compounded_sales_growth, a.compounded_profit_growth,
                pl.net_profit
         FROM companies c
@@ -635,6 +673,7 @@ def get_screener_results(filters: dict | None = None, sort_by: str = "company_id
         "PB": "pb_ratio",
         "Interest Coverage": "interest_coverage",
         "Market Cap": "market_cap_crore",
+        "Operating Profit Margin": "operating_profit_margin_pct",
     }
 
     if filters:
