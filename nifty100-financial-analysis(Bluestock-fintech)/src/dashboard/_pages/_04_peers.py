@@ -1,82 +1,118 @@
-"""
-Peer Comparison page - Percentile rankings and radar charts within peer groups.
-"""
+"""Peer comparison with percentile ranks and company-versus-peer radar analysis."""
 
-import streamlit as st
 import pandas as pd
-import numpy as np
+import streamlit as st
 
-from src.dashboard.utils.db import get_company_list, get_peer_groups, get_peer_percentiles, get_peer_group_members
-from src.screener.charts import create_peer_radar_chart, save_radar_chart
+from src.dashboard.ui import (
+    COLORS, badge, metric_grid, page_header, section_header,
+)
+from src.dashboard.utils.db import (
+    get_company_list, get_peer_group_members, get_peer_groups, get_peer_percentiles,
+)
+from src.screener.charts import create_peer_radar_chart
 
 
 def render() -> None:
-    """Render the Peer Comparison page."""
-    st.title("👥 Peer Comparison")
-    st.markdown("Compare a company against its peer group using percentile rankings.")
+    page_header(
+        "Peer comparison",
+        "Benchmark a company against its sector peer set using percentile ranks and a side-by-side financial profile.",
+    )
 
-    # Company selector
     companies = get_company_list()
     if not companies:
         st.error("No companies found.")
         return
 
-    company_names = [c["company_name"] for c in companies]
-    selected = st.selectbox("Select Company", company_names)
+    with st.container(border=True):
+        select_col, action_col = st.columns([3, 1], gap="large")
+        company_names = [c["company_name"] for c in companies]
+        with select_col:
+            selected = st.selectbox("Company", company_names)
+        with action_col:
+            st.markdown('<div style="height:27px"></div>', unsafe_allow_html=True)
+            analyze = st.button("Compare with peers", type="primary", use_container_width=True)
 
-    if st.button("Analyze Peers", type="primary"):
-        company_id = next(c["company_id"] for c in companies if c["company_name"] == selected)
+    if not analyze:
+        st.caption("Choose a company to calculate its relative position within the assigned peer group.")
+        return
 
-        with st.spinner("Computing peer percentiles..."):
-            percentiles = get_peer_percentiles(company_id)
-            peer_group = get_peer_groups(company_id)
+    company_id = next(c["company_id"] for c in companies if c["company_name"] == selected)
+    with st.spinner("Computing peer percentiles..."):
+        percentiles = get_peer_percentiles(company_id)
+        peer_group = str(get_peer_groups(company_id) or "")
 
-        if not percentiles:
-            st.warning("No peer group data available for this company.")
-            return
+    if not percentiles:
+        st.warning("No peer group data available for this company.")
+        return
 
-        # Peer group info
-        st.subheader(f"Peer Group: {peer_group}")
-        st.caption(f"Analysis for: **{selected}**")
+    peer_list = get_peer_group_members(peer_group) if peer_group else []
+    overall_score = percentiles.get("overall_peer_score")
 
-        # Overall peer score
-        overall_score = percentiles.get("overall_peer_score")
-        if overall_score is not None:
-            score_color = "green" if overall_score >= 80 else "orange" if overall_score >= 50 else "red"
-            st.markdown(f"### Overall Peer Score: "
-                       f"<span style='color:{score_color};font-size:1.5em'>{overall_score:.1f}/100</span>",
-                       unsafe_allow_html=True)
+    metric_grid([
+        {"label": "Overall peer score", "value": f"{overall_score:.1f} / 100" if overall_score is not None else "N/A", "note": "Average of available percentiles"},
+        {"label": "Peer group", "value": peer_group or "N/A", "note": selected},
+        {"label": "Companies in peer set", "value": str(len(peer_list)), "note": "Including selected company"},
+    ], columns=3)
 
-        st.markdown("---")
+    left_col, right_col = st.columns([1, 1.15], gap="large")
 
-        # Percentile table
-        st.subheader("📊 Percentile Rankings (0-100, Higher is Better*)")
-        pct_cols = [k for k in percentiles.keys() if k.endswith("_percentile") or k == "overall_peer_score"]
+    with left_col:
+        with st.container(border=True):
+            section_header("Percentile rankings")
+            pct_cols = [k for k in percentiles if k.endswith("_percentile")]
+            if pct_cols:
+                pct_data = {
+                    k.replace("_percentile", "").replace("_", " ").title(): v
+                    for k, v in percentiles.items() if k in pct_cols
+                }
+                df_pct = pd.DataFrame([
+                    {"Metric": key, "Percentile": f"{value:.1f}" if pd.notna(value) else "N/A"}
+                    for key, value in pct_data.items()
+                ])
+                st.dataframe(
+                    df_pct,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "Metric": st.column_config.TextColumn("Metric", width="large"),
+                        "Percentile": st.column_config.TextColumn("Percentile", width="small"),
+                    },
+                )
+            st.caption("Higher is better. P/E, P/B and debt-to-equity are inverted so lower values score higher.")
 
-        if pct_cols:
-            pct_data = {k.replace("_percentile", "").replace("_", " ").title(): v
-                       for k, v in percentiles.items() if k in pct_cols}
-            df_pct = pd.DataFrame([pct_data]).T.rename(columns={0: "Percentile"})
-            df_pct["Percentile"] = df_pct["Percentile"].apply(lambda x: f"{x:.1f}" if pd.notna(x) else "N/A")
-            st.dataframe(df_pct, use_container_width=True)
+    with right_col:
+        with st.container(border=True):
+            section_header("Company vs peer average")
+            try:
+                fig = create_peer_radar_chart(company_id)
+                fig.patch.set_facecolor("#FFFFFF")
+                for ax in fig.get_axes():
+                    ax.set_facecolor("#FFFFFF")
+                    ax.tick_params(colors=COLORS["text_secondary"], labelsize=9)
+                    ax.xaxis.label.set_color(COLORS["text_primary"])
+                    ax.yaxis.label.set_color(COLORS["text_primary"])
+                    ax.title.set_color(COLORS["text_primary"])
+                    ax.grid(color=COLORS["border_light"], linewidth=0.8)
+                    for spine in ax.spines.values():
+                        spine.set_color(COLORS["border_medium"])
+                st.pyplot(fig, use_container_width=True)
+            except Exception as exc:
+                st.error(f"Could not generate radar chart: {exc}")
 
-        st.caption("* For PE, PB, and Debt-to-Equity: lower values receive higher percentiles (inverted)")
-
-        # Radar chart
-        st.subheader("🕸️ Radar Chart: Company vs Peer Average")
-        try:
-            fig = create_peer_radar_chart(company_id)
-            st.pyplot(fig)
-        except Exception as e:
-            st.error(f"Could not generate radar chart: {e}")
-
-        # Peer group details
-        st.markdown("---")
-        st.subheader("🏷️ Peer Group Members")
-        peer_list = get_peer_group_members(peer_group)
-        if peer_list:
-            df_peers = pd.DataFrame(peer_list)
-            st.dataframe(df_peers, use_container_width=True, hide_index=True)
+    section_header("Peer group members")
+    if peer_list:
+        df_peers = pd.DataFrame(peer_list)
+        st.dataframe(
+            df_peers,
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "company_id": st.column_config.TextColumn("Symbol", width="small"),
+                "company_name": st.column_config.TextColumn("Company name", width="large"),
+            },
+        )
+    else:
+        st.info("No peer members available.")
 
 
 if __name__ == "__main__":

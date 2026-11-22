@@ -50,10 +50,25 @@ This repository contains two financial analytics projects developed as part of t
 - Automated test suite (**795 tests passing**)
 - PDF report generation (2-page tearsheets per company) and analyst documentation
 
-### Visualizations
-| Clustering Elbow Plot | Sample Tearsheet (PDF) |
+### Nifty 100 Dashboard Preview
+
+The Streamlit dashboard provides an interactive, light-themed interface for exploring Nifty 100 companies across 8 integrated pages.
+
+| Home — Market overview with KPI cards, sector distribution and quality leaders | Company Profile — Financial statements, ratios, cash flow and capital allocation |
 |:---:|:---:|
-| ![Elbow Plot](nifty100-financial-analysis(Bluestock-fintech)/reports/elbow_plot.png) | *2-page PDF tearsheets generated per company (KPIs, charts, balance sheet waterfall, pros/cons, capital allocation badge)* |
+| ![Home](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/home.png) | ![Company Profile](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/company-profile.png) |
+
+| Screener — Preset strategies and custom filters with sortable results | Peer Comparison — Percentile rankings and radar charts |
+|:---:|:---:|
+| ![Screener](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/screener.png) | ![Peer Comparison](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/peer-comparison.png) |
+
+| Financial Trends — Revenue, profit, margin and CAGR analysis | Sector Analysis — Sector aggregates, leaderboards and comparisons |
+|:---:|:---:|
+| ![Financial Trends](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/financial-trends.png) | ![Sector Analysis](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/sector-analysis.png) |
+
+| Capital Allocation — ROE/ROCE efficiency and cash conversion | Reports — Peer workbook generation and custom reports |
+|:---:|:---:|
+| ![Capital Allocation](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/capital-allocation.png) | ![Reports](nifty100-financial-analysis(Bluestock-fintech)/reports/readme-screenshots/reports.png) |
 
 ---
 
